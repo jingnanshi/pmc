@@ -12,7 +12,12 @@ set(PMC_SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/pmc_clique_utils.cpp
         )
 
-add_library(pmc SHARED ${PMC_SOURCE_FILES})
+option(PMC_BUILD_SHARED "Build pmc as a shared library (.so)" ON)
+if (PMC_BUILD_SHARED)
+        add_library(pmc SHARED ${PMC_SOURCE_FILES})
+else()
+        add_library(pmc STATIC ${PMC_SOURCE_FILES})
+endif()
 
 target_include_directories(pmc PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
