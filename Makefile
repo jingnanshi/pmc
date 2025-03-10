@@ -11,13 +11,13 @@ all: pmc
 
 #OPTFLAGS    = -g -D _GLIBCXX_DEBUG
 OPTFLAGS    = -O3
-CFLAGS      = $(OPTFLAGS) -fPIC
+CFLAGS      = $(OPTFLAGS) -fPIC -Iinclude
 #CFLAGS 		+= -D_GLIBCXX_PARALLEL 
 #CFLAGS 		+= -floop-parallelize-all -ftree-loop-distribution
 
 
 CXX          = g++
-H_FILES     = pmc.h
+H_FILES     = include/pmc/pmc.h
 
 
 .cpp.o:
