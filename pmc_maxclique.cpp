@@ -20,7 +20,6 @@
 #include "pmc/pmc_debug_utils.h"
 #include "pmc/pmc_maxclique.h"
 
-#include <cstdint>
 #include <cstring>
 
 using namespace std;
@@ -31,7 +30,7 @@ int pmc_maxclique::search(pmc_graph& G, vector<int>& sol) {
     vertices = G.get_vertices();
     edges = G.get_edges();
     degree = G.get_degree();
-    std::vector<std::uint8_t> pruned(G.num_vertices(), 0);
+    bool_vector pruned(G.num_vertices());
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -70,7 +69,7 @@ int pmc_maxclique::search(pmc_graph& G, vector<int>& sol) {
                 }
                 P = T;
             }
-            pruned[u] = 1;
+            pruned[u] = true;
         }
     }
 
@@ -88,7 +87,7 @@ void pmc_maxclique::branch(
         vector<short>& ind,
         vector<int>& C,
         vector<int>& C_max,
-        const std::vector<std::uint8_t>& pruned,
+        const bool_vector& pruned,
         int& mc) {
 
     // stop early if ub is reached
@@ -157,7 +156,7 @@ int pmc_maxclique::search_dense(pmc_graph& G, vector<int>& sol) {
     degree = G.get_degree();
     auto adj = G.adj;
 
-    std::vector<std::uint8_t> pruned(G.num_vertices(), 0);
+    bool_vector pruned(G.num_vertices());
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -196,7 +195,7 @@ int pmc_maxclique::search_dense(pmc_graph& G, vector<int>& sol) {
                 }
                 P = T;
             }
-            pruned[u] = 1;
+            pruned[u] = true;
             for (long long j = (*vertices)[u]; j < (*vertices)[u + 1]; j++) {
                 adj[u][(*edges)[j]] = false;
                 adj[(*edges)[j]][u] = false;
@@ -217,9 +216,9 @@ void pmc_maxclique::branch_dense(
         vector<short>& ind,
         vector<int>& C,
         vector<int>& C_max,
-        std::vector<std::uint8_t>& pruned,
+        bool_vector& pruned,
         int& mc,
-        vector<vector<std::uint8_t>> &adj) {
+        std::vector<bool_vector>& adj) {
 
     // stop early if ub is reached
     if (not_reached_ub) {

@@ -31,7 +31,7 @@ int pmcx_maxclique::search(pmc_graph& G, vector<int>& sol) {
     vertices = G.get_vertices();
     edges = G.get_edges();
 //    degree = G.get_degree();
-    std::vector<std::uint8_t> pruned(G.num_vertices(), 0);
+    bool_vector pruned(G.num_vertices());
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -92,7 +92,7 @@ int pmcx_maxclique::search(pmc_graph& G, vector<int>& sol) {
                     }
                     P = T;
                 }
-                pruned[u] = 1;
+                pruned[u] = true;
 
                 // dynamically reduce graph in a thread-safe manner
                 if ((get_time() - induce_time[omp_get_thread_num()]) > wait_time) {
@@ -118,7 +118,7 @@ void pmcx_maxclique::branch(
         vector<int>& C,
         vector<int>& C_max,
         vector< vector<int> >& colors,
-        std::vector<std::uint8_t>& pruned,
+        bool_vector& pruned,
         int& mc) {
 
     // stop early if ub is reached
@@ -183,7 +183,7 @@ int pmcx_maxclique::search_dense(pmc_graph& G, vector<int>& sol) {
 //    degree = G.get_degree();
     auto adj = G.adj;
 
-    std::vector<std::uint8_t> pruned(G.num_vertices(), 0);
+    bool_vector pruned(G.num_vertices());
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -246,7 +246,7 @@ int pmcx_maxclique::search_dense(pmc_graph& G, vector<int>& sol) {
                     }
                     P = T;
                 }
-                pruned[u] = 1;
+                pruned[u] = true;
                 for (long long j = vs[u]; j < vs[u + 1]; j++) {
                     adj[u][es[j]] = false;
                     adj[es[j]][u] = false;
@@ -277,9 +277,9 @@ void pmcx_maxclique::branch_dense(
         vector<int>& C,
         vector<int>& C_max,
         vector< vector<int> >& colors,
-        std::vector<std::uint8_t>& pruned,
+        bool_vector& pruned,
         int& mc,
-        vector<vector<std::uint8_t>> &adj) {
+        std::vector<bool_vector>& adj) {
 
     // stop early if ub is reached
     if (not_reached_ub) {

@@ -20,9 +20,9 @@
 #ifndef PMC_NEIGH_COLORING_H_
 #define PMC_NEIGH_COLORING_H_
 
+#include "pmc/pmc_bool_vector.h"
 #include "pmc_vertex.h"
 
-#include <cstdint>
 #include <vector>
 
 namespace pmc {
@@ -94,7 +94,7 @@ namespace pmc {
             std::vector<int>& C_max,
             std::vector< std::vector<int> >& colors,
             int& mc,
-            std::vector<std::vector<std::uint8_t>> &adj) {
+            std::vector<bool_vector>& adj) {
 
         int j = 0, u = 0, k = 1, k_prev = 0;
         int max_k = 1;

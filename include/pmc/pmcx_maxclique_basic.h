@@ -99,7 +99,7 @@ namespace pmc {
                     std::vector<int>& C,
                     std::vector<int>& C_max,
                     std::vector< std::vector<int> >& colors,
-                    const std::vector<std::uint8_t>& pruned,
+                    const bool_vector& pruned,
                     int& mc);
 
 
@@ -113,9 +113,9 @@ namespace pmc {
                     std::vector<int>& C,
                     std::vector<int>& C_max,
                     std::vector< std::vector<int> >& colors,
-                    std::vector<std::uint8_t>& pruned,
+                    bool_vector& pruned,
                     int& mc,
-                    std::vector<std::vector<std::uint8_t>> &adj);
+                    std::vector<bool_vector>& adj);
 
     };
 };

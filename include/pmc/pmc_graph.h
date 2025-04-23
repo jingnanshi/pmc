@@ -20,10 +20,9 @@
 #ifndef PMC_GRAPH_H_
 #define PMC_GRAPH_H_
 
-#include "math.h"
+#include "pmc/pmc_bool_vector.h"
 #include "pmc_vertex.h"
 
-#include <cstdint>
 #include <map>
 #include <string>
 #include <vector>
@@ -45,7 +44,7 @@ namespace pmc {
             double avg_degree;
             bool is_gstats;
             std::string fn;
-            std::vector<std::vector<std::uint8_t>> adj;
+            std::vector<bool_vector> adj;
 
             // constructor
             pmc_graph(const std::string& filename);
@@ -64,11 +63,11 @@ namespace pmc {
 
             void read_graph(const std::string& filename);
             void create_adj();
-            void reduce_graph(const std::vector<std::uint8_t>& pruned);
+            void reduce_graph(const bool_vector& pruned);
             void reduce_graph(
                     std::vector<long long>& vs,
                     std::vector<int>& es,
-                    const std::vector<std::uint8_t>& pruned,
+                    const bool_vector& pruned,
                     int id,
                     int& mc);
 
@@ -89,7 +88,7 @@ namespace pmc {
             void vertex_degrees();
             void update_degrees();
             void update_degrees(bool flag);
-            void update_degrees(std::vector<std::uint8_t>& pruned, int& mc);
+            void update_degrees(bool_vector& pruned, int& mc);
             double density() { return (double)num_edges() / (num_vertices() * (num_vertices() - 1.0) / 2.0); }
             int get_max_degree() { return max_degree; }
             int get_min_degree() { return min_degree; }
@@ -113,7 +112,7 @@ namespace pmc {
             std::vector<int>* get_kcores() { return &kcore; }
             std::vector<int>* get_kcore_ordering() { return &kcore_order; }
             int get_max_core() { return max_core; }
-            void update_kcores(const std::vector<std::uint8_t>& pruned);
+            void update_kcores(const bool_vector& pruned);
 
             void compute_cores();
             void induced_cores_ordering(
@@ -121,8 +120,8 @@ namespace pmc {
                     std::vector<int>& E);
 
             // clique utils
-            int initial_pruning(pmc_graph& G, std::vector<std::uint8_t>& pruned, int lb);
-            int initial_pruning(pmc_graph& G, std::vector<std::uint8_t>& pruned, int lb, std::vector<std::vector<std::uint8_t>> &adj);
+            int initial_pruning(pmc_graph& G, bool_vector& pruned, int lb);
+            int initial_pruning(pmc_graph& G, bool_vector& pruned, int lb, std::vector<bool_vector>& adj);
             void order_vertices(std::vector<Vertex> &V, pmc_graph &G,
                     int &lb_idx, int &lb, std::string vertex_ordering, bool decr_order);
 
@@ -135,7 +134,7 @@ namespace pmc {
             void reduce_graph(
                     std::vector<long long>& vs,
                     std::vector<int>& es,
-                    const std::vector<std::uint8_t>& pruned,
+                    const bool_vector& pruned,
                     pmc_graph& G,
                     int id,
                     int& mc);
