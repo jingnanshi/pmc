@@ -115,7 +115,7 @@ namespace pmc {
                     std::vector< std::vector<int> >& colors,
                     int* &pruned,
                     int& mc,
-                    std::vector<std::vector<bool>> &adj);
+                    std::vector<std::vector<std::uint8_t>> &adj);
 
     };
 };

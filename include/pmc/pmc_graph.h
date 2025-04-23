@@ -23,6 +23,7 @@
 #include "math.h"
 #include "pmc_vertex.h"
 
+#include <cstdint>
 #include <map>
 #include <string>
 #include <vector>
@@ -44,7 +45,7 @@ namespace pmc {
             double avg_degree;
             bool is_gstats;
             std::string fn;
-            std::vector<std::vector<bool>> adj;
+            std::vector<std::vector<std::uint8_t>> adj;
 
             // constructor
             pmc_graph(const std::string& filename);
@@ -122,7 +123,7 @@ namespace pmc {
 
             // clique utils
             int initial_pruning(pmc_graph& G, int* &pruned, int lb);
-            int initial_pruning(pmc_graph& G, int* &pruned, int lb, std::vector<std::vector<bool>> &adj);
+            int initial_pruning(pmc_graph& G, int* &pruned, int lb, std::vector<std::vector<std::uint8_t>> &adj);
             void order_vertices(std::vector<Vertex> &V, pmc_graph &G,
                     int &lb_idx, int &lb, std::string vertex_ordering, bool decr_order);
 

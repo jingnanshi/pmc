@@ -22,6 +22,7 @@
 
 #include "pmc_vertex.h"
 
+#include <cstdint>
 #include <vector>
 
 namespace pmc {
@@ -94,7 +95,7 @@ namespace pmc {
             std::vector<int>& C_max,
             std::vector< std::vector<int> >& colors,
             int& mc,
-            std::vector<std::vector<bool>> &adj) {
+            std::vector<std::vector<std::uint8_t>> &adj) {
 
         int j = 0, u = 0, k = 1, k_prev = 0;
         int max_k = 1;

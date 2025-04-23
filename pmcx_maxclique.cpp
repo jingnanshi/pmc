@@ -284,7 +284,7 @@ void pmcx_maxclique::branch_dense(
         vector< vector<int> >& colors,
         int* &pruned,
         int& mc,
-        vector<vector<bool>> &adj) {
+        vector<vector<std::uint8_t>> &adj) {
 
     // stop early if ub is reached
     if (not_reached_ub) {

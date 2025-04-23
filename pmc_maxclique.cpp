@@ -20,6 +20,7 @@
 #include "pmc/pmc_debug_utils.h"
 #include "pmc/pmc_maxclique.h"
 
+#include <cstdint>
 #include <cstring>
 
 using namespace std;
@@ -223,7 +224,7 @@ void pmc_maxclique::branch_dense(
         vector<int>& C_max,
         int* &pruned,
         int& mc,
-        vector<vector<bool>> &adj) {
+        vector<vector<std::uint8_t>> &adj) {
 
     // stop early if ub is reached
     if (not_reached_ub) {

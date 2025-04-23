@@ -109,7 +109,7 @@ namespace pmc {
                     std::vector<int>& C_max,
                     int* &pruned,
                     int& mc,
-                    std::vector<std::vector<bool>> &adj);
+                    std::vector<std::vector<std::uint8_t>> &adj);
 
     };
 };
