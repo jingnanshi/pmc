@@ -348,7 +348,7 @@ void pmc_graph::update_degrees(bool flag) {
 }
 
 
-void pmc_graph::update_degrees(int* &pruned, int& mc) {
+void pmc_graph::update_degrees(std::vector<int>& pruned, int& mc) {
     max_degree = -1;
     min_degree = std::numeric_limits<int>::max();
     int p = 0;
@@ -368,7 +368,7 @@ void pmc_graph::update_degrees(int* &pruned, int& mc) {
 }
 
 
-void pmc_graph::update_kcores(int* &pruned) {
+void pmc_graph::update_kcores(std::vector<int>& pruned) {
 
     long long n, d, i, j, start, num, md;
     long long v, u, w, du, pu, pw, md_end;
@@ -456,7 +456,7 @@ string pmc_graph::get_file_extension(const string& filename) {
 
 
 
-void pmc_graph::reduce_graph(int* &pruned) {
+void pmc_graph::reduce_graph(std::vector<int>& pruned) {
     vector<long long> V(vertices.size(),0);
     vector<int> E;
     E.reserve(edges.size());
@@ -481,7 +481,7 @@ void pmc_graph::reduce_graph(int* &pruned) {
 void pmc_graph::reduce_graph(
         vector<long long>& vs,
         vector<int>& es,
-        int* &pruned,
+        std::vector<int>& pruned,
         int id,
         int& mc) {
 

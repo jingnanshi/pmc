@@ -28,7 +28,7 @@
 using namespace std;
 using namespace pmc;
 
-int pmc_graph::initial_pruning(pmc_graph& G, int* &pruned, int lb) {
+int pmc_graph::initial_pruning(pmc_graph& G, std::vector<int>& pruned, int lb) {
     int lb_idx = 0;
     for (int i = G.num_vertices()-1; i >= 0; i--) {
         if (kcore[kcore_order[i]] == lb)  lb_idx = i;
@@ -48,7 +48,7 @@ int pmc_graph::initial_pruning(pmc_graph& G, int* &pruned, int lb) {
 }
 
 
-int pmc_graph::initial_pruning(pmc_graph& G, int* &pruned, int lb, std::vector<std::vector<std::uint8_t>> &adj) {
+int pmc_graph::initial_pruning(pmc_graph& G, std::vector<int>& pruned, int lb, std::vector<std::vector<std::uint8_t>> &adj) {
     int lb_idx = 0;
     for (int i = G.num_vertices()-1; i >= 0; i--) {
         if (kcore[kcore_order[i]] == lb)  lb_idx = i;
@@ -127,7 +127,7 @@ void pmc_graph::order_vertices(vector<Vertex> &V, pmc_graph &G,
 void pmc_graph::reduce_graph(
         vector<long long>& vs,
         vector<int>& es,
-        int* &pruned,
+        std::vector<int>& pruned,
         pmc_graph& G,
         int id,
         int& mc) {

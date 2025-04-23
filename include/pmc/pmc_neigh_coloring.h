@@ -36,7 +36,7 @@ namespace pmc {
             std::vector<int>& C,
             std::vector<int>& C_max,
             std::vector< std::vector<int> >& colors,
-            int* pruned,
+            std::vector<int>& pruned,
             int& mc) {
 
         int j = 0, u = 0, k = 1, k_prev = 0;

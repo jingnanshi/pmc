@@ -30,8 +30,7 @@ int pmcx_maxclique_basic::search(pmc_graph& G, vector<int>& sol) {
     vertices = G.get_vertices();
     edges = G.get_edges();
     degree = G.get_degree();
-    int* pruned = new int[G.num_vertices()];
-    memset(pruned, 0, G.num_vertices() * sizeof(int));
+    std::vector<int> pruned(G.num_vertices(), 0);
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -95,8 +94,6 @@ int pmcx_maxclique_basic::search(pmc_graph& G, vector<int>& sol) {
         }
     }
 
-    if (pruned) delete[] pruned;
-
     sol.resize(mc);
     for (int i = 0; i < C_max.size(); i++)  sol[i] = C_max[i];
     G.print_break();
@@ -114,7 +111,7 @@ void pmcx_maxclique_basic::branch(
         vector<int>& C,
         vector<int>& C_max,
         vector< vector<int> >& colors,
-        int* &pruned,
+        std::vector<int>& pruned,
         int& mc) {
 
     // stop early if ub is reached
@@ -187,8 +184,8 @@ int pmcx_maxclique_basic::search_dense(pmc_graph& G, vector<int>& sol) {
     degree = G.get_degree();
     auto adj = G.adj;
 
-    int* pruned = new int[G.num_vertices()];
-    memset(pruned, 0, G.num_vertices() * sizeof(int));
+    std::vector<int> pruned(G.num_vertices(), 0);
+
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -257,8 +254,6 @@ int pmcx_maxclique_basic::search_dense(pmc_graph& G, vector<int>& sol) {
         }
     }
 
-    if (pruned) delete[] pruned;
-
     sol.resize(mc);
     for (int i = 0; i < C_max.size(); i++)  sol[i] = C_max[i];
     G.print_break();
@@ -276,7 +271,7 @@ void pmcx_maxclique_basic::branch_dense(
         vector<int>& C,
         vector<int>& C_max,
         vector< vector<int> >& colors,
-        int* &pruned,
+        std::vector<int>& pruned,
         int& mc,
         vector<vector<std::uint8_t>> &adj) {
 

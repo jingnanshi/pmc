@@ -25,7 +25,7 @@ using namespace std;
 void pmc_graph::induced_cores_ordering(
         vector<long long>& V,
         vector<int>& E,
-        int* &pruned) {
+        std::vector<int>& pruned) {
 
     long long n, d, i, j, start, num, md;
     long long v, u, w, du, pu, pw, md_end;

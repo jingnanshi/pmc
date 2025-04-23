@@ -64,11 +64,11 @@ namespace pmc {
 
             void read_graph(const std::string& filename);
             void create_adj();
-            void reduce_graph(int* &pruned);
+            void reduce_graph(std::vector<int>& pruned);
             void reduce_graph(
                     std::vector<long long>& vs,
                     std::vector<int>& es,
-                    int* &pruned,
+                    std::vector<int>& pruned,
                     int id,
                     int& mc);
 
@@ -89,7 +89,7 @@ namespace pmc {
             void vertex_degrees();
             void update_degrees();
             void update_degrees(bool flag);
-            void update_degrees(int* &pruned, int& mc);
+            void update_degrees(std::vector<int>& pruned, int& mc);
             double density() { return (double)num_edges() / (num_vertices() * (num_vertices() - 1.0) / 2.0); }
             int get_max_degree() { return max_degree; }
             int get_min_degree() { return min_degree; }
@@ -113,17 +113,17 @@ namespace pmc {
             std::vector<int>* get_kcores() { return &kcore; }
             std::vector<int>* get_kcore_ordering() { return &kcore_order; }
             int get_max_core() { return max_core; }
-            void update_kcores(int* &pruned);
+            void update_kcores(std::vector<int>& pruned);
 
             void compute_cores();
             void induced_cores_ordering(
                     std::vector<long long>& V,
                     std::vector<int>& E,
-                    int* &pruned);
+                    std::vector<int>& pruned);
 
             // clique utils
-            int initial_pruning(pmc_graph& G, int* &pruned, int lb);
-            int initial_pruning(pmc_graph& G, int* &pruned, int lb, std::vector<std::vector<std::uint8_t>> &adj);
+            int initial_pruning(pmc_graph& G, std::vector<int>& pruned, int lb);
+            int initial_pruning(pmc_graph& G, std::vector<int>& pruned, int lb, std::vector<std::vector<std::uint8_t>> &adj);
             void order_vertices(std::vector<Vertex> &V, pmc_graph &G,
                     int &lb_idx, int &lb, std::string vertex_ordering, bool decr_order);
 
@@ -136,7 +136,7 @@ namespace pmc {
             void reduce_graph(
                     std::vector<long long>& vs,
                     std::vector<int>& es,
-                    int* &pruned,
+                    std::vector<int>& pruned,
                     pmc_graph& G,
                     int id,
                     int& mc);
