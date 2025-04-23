@@ -20,6 +20,8 @@
 #include "pmc/pmc_debug_utils.h"
 #include "pmc/pmc_graph.h"
 
+#include <limits>
+
 using namespace pmc;
 using namespace std;
 
@@ -169,7 +171,7 @@ pmc_graph::pmc_graph(map<int,vector<int> > v_map) {
 }
 
 void pmc_graph::read_mtx(const string& filename) {
-    float connStrength = -DBL_MAX;
+    float connStrength = std::numeric_limits<float>::lowest();
     istringstream in2;
     string line="";
     map<int,vector<int> > v_map;

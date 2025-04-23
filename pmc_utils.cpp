@@ -19,6 +19,13 @@
 
 #include "pmc/pmc_utils.h"
 
+#include <cassert>
+#include <dirent.h>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <sys/time.h>
+
 using namespace std;
 
 bool fexists(const char *filename) {

@@ -20,18 +20,17 @@
 #ifndef PMC_HEADERS_H_
 #define PMC_HEADERS_H_
 
-#include <iostream>
-#include <stdlib.h>
-#include <vector>
-#include <time.h>
-#include <string.h>
-#include <stdio.h>
-#include <map>
 #include <fstream>
+#include <iostream>
+#include <map>
+#include <omp.h>
 #include <sstream>
 #include <stdint.h>
-#include <omp.h>
-using namespace std;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <vector>
 
 #ifndef LINE_LENGTH
 #define LINE_LENGTH 256

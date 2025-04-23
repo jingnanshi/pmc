@@ -20,25 +20,27 @@
 #ifndef PMC_HEU_H_
 #define PMC_HEU_H_
 
-#include "pmc_headers.h"
 #include "pmc_graph.h"
-#include "pmc_utils.h"
+#include "pmc_headers.h"
 #include "pmc_input.h"
+#include "pmc_utils.h"
 #include "pmc_vertex.h"
-#include <algorithm>
+
+#include <string>
+#include <vector>
 
 namespace pmc {
 
     class pmc_heu {
         public:
-            vector<int>* E;
-            vector<long long>* V;
-            vector<int>* K;
-            vector<int>* order;
-            vector<int>* degree;
+            std::vector<int>* E;
+            std::vector<long long>* V;
+            std::vector<int>* K;
+            std::vector<int>* order;
+            std::vector<int>* degree;
             double sec;
             int ub;
-            string strat;
+            std::string strat;
 
             int num_threads;
 
@@ -64,8 +66,8 @@ namespace pmc {
                 srand (time(NULL));
             };
 
-            int strategy(vector<int>& P);
-            void set_strategy(string s) { strat = s; }
+            int strategy(std::vector<int>& P);
+            void set_strategy(std::string s) { strat = s; }
             int compute_heuristic(int v);
 
             static bool desc_heur(Vertex v,  Vertex u) {
@@ -76,14 +78,14 @@ namespace pmc {
                 return (v.get_bound() < u.get_bound());
             }
 
-            int search(pmc_graph& graph, vector<int>& C_max);
-            int search_cores(pmc_graph& graph, vector<int>& C_max, int lb);
-            int search_bounds(pmc_graph& graph, vector<int>& C_max);
+            int search(pmc_graph& graph, std::vector<int>& C_max);
+            int search_cores(pmc_graph& graph, std::vector<int>& C_max, int lb);
+            int search_bounds(pmc_graph& graph, std::vector<int>& C_max);
 
-            inline void branch(vector<Vertex>& P, int sz,
-                    int& mc, vector<int>& C, vector<short>& ind);
+            inline void branch(std::vector<Vertex>& P, int sz,
+                    int& mc, std::vector<int>& C, std::vector<short>& ind);
 
-            inline void print_info(vector<int> C_max);
+            inline void print_info(std::vector<int> C_max);
     };
 };
 #endif

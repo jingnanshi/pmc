@@ -22,19 +22,19 @@
 
 #include "pmc_vertex.h"
 
-using namespace std;
+#include <vector>
 
 namespace pmc {
 
     // sequential dynamic greedy coloring and sort
     static void neigh_coloring_bound(
-            vector<long long>& vs,
-            vector<int>& es,
-            vector<Vertex> &P,
-            vector<short>& ind,
-            vector<int>& C,
-            vector<int>& C_max,
-            vector< vector<int> >& colors,
+            std::vector<long long>& vs,
+            std::vector<int>& es,
+            std::vector<Vertex> &P,
+            std::vector<short>& ind,
+            std::vector<int>& C,
+            std::vector<int>& C_max,
+            std::vector< std::vector<int> >& colors,
             int* pruned,
             int& mc) {
 
@@ -86,13 +86,13 @@ namespace pmc {
 
     // sequential dynamic greedy coloring and sort
     static void neigh_coloring_dense(
-            vector<long long>& vs,
-            vector<int>& es,
-            vector<Vertex> &P,
-            vector<short>& ind,
-            vector<int>& C,
-            vector<int>& C_max,
-            vector< vector<int> >& colors,
+            std::vector<long long>& vs,
+            std::vector<int>& es,
+            std::vector<Vertex> &P,
+            std::vector<short>& ind,
+            std::vector<int>& C,
+            std::vector<int>& C_max,
+            std::vector< std::vector<int> >& colors,
             int& mc,
             vector<vector<bool>> &adj) {
 

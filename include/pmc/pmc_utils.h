@@ -21,33 +21,23 @@
 #define PMC_UTILS_H_
 
 #include <cstddef>
-#include <sys/time.h>
-#include <unistd.h>
-#include <iostream>
-#include "assert.h"
-#include <sys/types.h>
-#include <dirent.h>
-#include <errno.h>
-#include <string>
 #include <set>
-#include "pmc_headers.h"
-
-
-using namespace std;
+#include <string>
+#include <vector>
 
 bool fexists(const char *filename);
 void usage(char *argv0);
 
 double get_time();
-string memory_usage();
+std::string memory_usage();
 
-void validate(bool condition, const string& msg);
+void validate(bool condition, const std::string &msg);
 
 void indent(int level);
-void indent(int level, string str);
-void print_max_clique(vector<int>& max_clique_data);
-void print_n_maxcliques(set< vector<int> > C, int n);
+void indent(int level, std::string str);
+void print_max_clique(std::vector<int> &max_clique_data);
+void print_n_maxcliques(std::set<std::vector<int>> C, int n);
 
-int getdir (string dir, vector<string> &files);
+int getdir(std::string dir, std::vector<std::string> &files);
 
 #endif
