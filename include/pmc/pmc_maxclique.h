@@ -96,7 +96,7 @@ namespace pmc {
                     std::vector<short>& ind,
                     std::vector<int>& C,
                     std::vector<int>& C_max,
-                    std::vector<int>& pruned,
+                    const std::vector<std::uint8_t>& pruned,
                     int& mc);
 
 
@@ -107,7 +107,7 @@ namespace pmc {
                     std::vector<short>& ind,
                     std::vector<int>& C,
                     std::vector<int>& C_max,
-                    std::vector<int>& pruned,
+                    std::vector<std::uint8_t>& pruned,
                     int& mc,
                     std::vector<std::vector<std::uint8_t>> &adj);
 

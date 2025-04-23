@@ -31,7 +31,7 @@ int pmcx_maxclique::search(pmc_graph& G, vector<int>& sol) {
     vertices = G.get_vertices();
     edges = G.get_edges();
 //    degree = G.get_degree();
-    std::vector<int> pruned(G.num_vertices(), 0);
+    std::vector<std::uint8_t> pruned(G.num_vertices(), 0);
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -84,7 +84,7 @@ int pmcx_maxclique::search(pmc_graph& G, vector<int>& sol) {
                     if (P.size() > mc) {
                         neigh_cores_bound(vs,es,P,ind,mc);
                         if (P.size() > mc && P[0].get_bound() >= mc) {
-                            neigh_coloring_bound(vs,es,P,ind,C,C_max,colors,pruned,mc);
+                            neigh_coloring_bound(vs,es,P,ind,C,C_max,colors,mc);
                             if (P.back().get_bound() > mc) {
                                 branch(vs,es,P, ind, C, C_max, colors, pruned, mc);
                             }
@@ -118,7 +118,7 @@ void pmcx_maxclique::branch(
         vector<int>& C,
         vector<int>& C_max,
         vector< vector<int> >& colors,
-        std::vector<int>& pruned,
+        std::vector<std::uint8_t>& pruned,
         int& mc) {
 
     // stop early if ub is reached
@@ -143,7 +143,7 @@ void pmcx_maxclique::branch(
 
                 if (R.size() > 0) {
                     // color graph induced by R and sort for O(1)
-                    neigh_coloring_bound(vs, es, R, ind, C, C_max, colors, pruned, mc);
+                    neigh_coloring_bound(vs, es, R, ind, C, C_max, colors, mc);
                     branch(vs, es, R, ind, C, C_max, colors, pruned, mc);
                 }
                 else if (C.size() > mc) {
@@ -183,7 +183,7 @@ int pmcx_maxclique::search_dense(pmc_graph& G, vector<int>& sol) {
 //    degree = G.get_degree();
     auto adj = G.adj;
 
-    std::vector<int> pruned(G.num_vertices(), 0);
+    std::vector<std::uint8_t> pruned(G.num_vertices(), 0);
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -277,7 +277,7 @@ void pmcx_maxclique::branch_dense(
         vector<int>& C,
         vector<int>& C_max,
         vector< vector<int> >& colors,
-        std::vector<int>& pruned,
+        std::vector<std::uint8_t>& pruned,
         int& mc,
         vector<vector<std::uint8_t>> &adj) {
 
