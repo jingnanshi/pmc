@@ -20,6 +20,7 @@
 #include "pmc/pmc_utils.h"
 
 #include <cassert>
+#include <cstring>
 #include <dirent.h>
 #include <fstream>
 #include <iostream>

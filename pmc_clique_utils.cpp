@@ -19,7 +19,10 @@
 
 #include "pmc/pmc_debug_utils.h"
 #include "pmc/pmc_graph.h"
+#include "pmc/pmc_utils.h"
+
 #include <algorithm>
+#include <iostream>
 
 using namespace std;
 using namespace pmc;

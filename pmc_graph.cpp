@@ -18,9 +18,15 @@
  */
 
 #include "pmc/pmc_debug_utils.h"
+#include "pmc/pmc_utils.h"
 #include "pmc/pmc_graph.h"
+#include "pmc/pmc_headers.h"
 
+#include <cstring>
+#include <fstream>
+#include <iostream>
 #include <limits>
+#include <sstream>
 
 using namespace pmc;
 using namespace std;
@@ -161,10 +167,10 @@ pmc_graph::pmc_graph(long long nedges, const int *ei, const int *ej, int offset)
     vertex_degrees();
 }
 
-pmc_graph::pmc_graph(map<int,vector<int> > v_map) {
+pmc_graph::pmc_graph(const map<int, vector<int>>& v_map) {
   vertices.push_back(edges.size());
-  for (int i=0;i < v_map.size(); i++) {
-    edges.insert(edges.end(),v_map[i].begin(),v_map[i].end());
+  for (const auto& v_pair : v_map) {
+    edges.insert(edges.end(), v_pair.second.begin(), v_pair.second.end());
     vertices.push_back(edges.size());
   }
   vertex_degrees();

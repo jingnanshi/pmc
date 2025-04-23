@@ -21,11 +21,9 @@
 #define PMC_GRAPH_H_
 
 #include "math.h"
-#include "pmc_headers.h"
-#include "pmc_utils.h"
 #include "pmc_vertex.h"
 
-#include <cstddef>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -58,7 +56,7 @@ namespace pmc {
                 vertex_degrees();
             }
             pmc_graph(long long nedges, const int *ei, const int *ej, int offset);
-            pmc_graph(std::map<int, std::vector<int>> v_map);
+            pmc_graph(const std::map<int, std::vector<int>>& v_map);
 
             // destructor
             ~pmc_graph();

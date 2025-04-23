@@ -21,12 +21,10 @@
 #define PMC_MAXCLIQUE_H_
 
 #include "pmc_graph.h"
-#include "pmc_headers.h"
 #include "pmc_input.h"
 #include "pmc_utils.h"
 #include "pmc_vertex.h"
 
-#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -111,7 +109,7 @@ namespace pmc {
                     std::vector<int>& C_max,
                     int* &pruned,
                     int& mc,
-                    vector<vector<bool>> &adj);
+                    std::vector<std::vector<bool>> &adj);
 
     };
 };

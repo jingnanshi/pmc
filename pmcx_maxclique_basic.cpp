@@ -18,6 +18,9 @@
  */
 
 #include "pmc/pmcx_maxclique_basic.h"
+#include "pmc/pmc_neigh_coloring.h"
+
+#include <cstring>
 
 using namespace std;
 using namespace pmc;

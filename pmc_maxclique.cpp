@@ -20,6 +20,8 @@
 #include "pmc/pmc_debug_utils.h"
 #include "pmc/pmc_maxclique.h"
 
+#include <cstring>
+
 using namespace std;
 using namespace pmc;
 
