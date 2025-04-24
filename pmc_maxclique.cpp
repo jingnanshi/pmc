@@ -20,6 +20,8 @@
 #include "pmc/pmc_debug_utils.h"
 #include "pmc/pmc_maxclique.h"
 
+#include <cstring>
+
 using namespace std;
 using namespace pmc;
 
@@ -28,8 +30,7 @@ int pmc_maxclique::search(pmc_graph& G, vector<int>& sol) {
     vertices = G.get_vertices();
     edges = G.get_edges();
     degree = G.get_degree();
-    int* pruned = new int[G.num_vertices()];
-    memset(pruned, 0, G.num_vertices() * sizeof(int));
+    bool_vector pruned(G.num_vertices());
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -68,11 +69,9 @@ int pmc_maxclique::search(pmc_graph& G, vector<int>& sol) {
                 }
                 P = T;
             }
-            pruned[u] = 1;
+            pruned[u] = true;
         }
     }
-
-    if (pruned) delete[] pruned;
 
     sol.resize(mc);
     for (int i = 0; i < C_max.size(); i++)  sol[i] = C_max[i];
@@ -88,7 +87,7 @@ void pmc_maxclique::branch(
         vector<short>& ind,
         vector<int>& C,
         vector<int>& C_max,
-        int* &pruned,
+        const bool_vector& pruned,
         int& mc) {
 
     // stop early if ub is reached
@@ -157,8 +156,7 @@ int pmc_maxclique::search_dense(pmc_graph& G, vector<int>& sol) {
     degree = G.get_degree();
     auto adj = G.adj;
 
-    int* pruned = new int[G.num_vertices()];
-    memset(pruned, 0, G.num_vertices() * sizeof(int));
+    bool_vector pruned(G.num_vertices());
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -197,14 +195,13 @@ int pmc_maxclique::search_dense(pmc_graph& G, vector<int>& sol) {
                 }
                 P = T;
             }
-            pruned[u] = 1;
+            pruned[u] = true;
             for (long long j = (*vertices)[u]; j < (*vertices)[u + 1]; j++) {
                 adj[u][(*edges)[j]] = false;
                 adj[(*edges)[j]][u] = false;
             }
         }
     }
-    if (pruned) delete[] pruned;
 
     sol.resize(mc);
     for (int i = 0; i < C_max.size(); i++)  sol[i] = C_max[i];
@@ -219,9 +216,9 @@ void pmc_maxclique::branch_dense(
         vector<short>& ind,
         vector<int>& C,
         vector<int>& C_max,
-        int* &pruned,
+        bool_vector& pruned,
         int& mc,
-        vector<vector<bool>> &adj) {
+        std::vector<bool_vector>& adj) {
 
     // stop early if ub is reached
     if (not_reached_ub) {

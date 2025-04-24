@@ -20,6 +20,8 @@
 #include "pmc/pmc_debug_utils.h"
 #include "pmc/pmc_heu.h"
 
+#include <algorithm>
+
 using namespace pmc;
 using namespace std;
 

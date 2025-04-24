@@ -20,11 +20,11 @@
 #include "pmc/pmc_graph.h"
 
 using namespace pmc;
+using namespace std;
 
 void pmc_graph::induced_cores_ordering(
         vector<long long>& V,
-        vector<int>& E,
-        int* &pruned) {
+        vector<int>& E) {
 
     long long n, d, i, j, start, num, md;
     long long v, u, w, du, pu, pw, md_end;

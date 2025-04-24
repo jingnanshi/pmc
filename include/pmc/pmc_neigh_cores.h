@@ -22,24 +22,24 @@
 
 #include "pmc_vertex.h"
 
-using namespace std;
+#include <vector>
 
 namespace pmc {
 
     static void neigh_cores_bound(
-            vector<long long>& vs,
-            vector<int>& es,
-            vector<Vertex> &P,
-            vector<short>& ind,
+            std::vector<long long>& vs,
+            std::vector<int>& es,
+            std::vector<Vertex> &P,
+            std::vector<short>& ind,
             int& mc) {
 
         int n = P.size() + 1;
 
         // lookup table
-        vector<int> newids_to_actual(n, 0);
-        vector<int> vert_order(n,0);
-        vector<int> deg(n,0);
-        vector<int> pos(n,0);
+        std::vector<int> newids_to_actual(n, 0);
+        std::vector<int> vert_order(n,0);
+        std::vector<int> deg(n,0);
+        std::vector<int> pos(n,0);
 
         // lookup table for neighbors
         for (int v = 1; v < n; v++) ind[P[v-1].get_id()] = 1;
@@ -57,7 +57,7 @@ namespace pmc {
         }
 
         int md_end = md+1;
-        vector<int> bin(md_end,0);
+        std::vector<int> bin(md_end,0);
         for (int v = 1; v < n; v++) bin[deg[v]]++;
 
         int start = 1, num = 0;
@@ -131,19 +131,19 @@ namespace pmc {
 
 
     static void neigh_cores_tight(
-            vector<long long>& vs,
-            vector<int>& es,
-            vector<Vertex> &P,
-            vector<short>& ind,
+            std::vector<long long>& vs,
+            std::vector<int>& es,
+            std::vector<Vertex> &P,
+            std::vector<short>& ind,
             int& mc) {
 
         int n = P.size() + 1;
 
         // lookup table
-        vector<int> newids_to_actual(n, 0);
-        vector<int> vert_order(n,0);
-        vector<int> deg(n,0);
-        vector<int> pos(n,0);
+        std::vector<int> newids_to_actual(n, 0);
+        std::vector<int> vert_order(n,0);
+        std::vector<int> deg(n,0);
+        std::vector<int> pos(n,0);
 
 
         // lookup table for neighbors
@@ -168,7 +168,7 @@ namespace pmc {
         }
 
         int md_end = md+1;
-        vector<int> bin(md_end,0);
+        std::vector<int> bin(md_end,0);
         for (int v = 1; v < n; v++) bin[deg[v]]++;
 
         int start = 1, num = 0;
