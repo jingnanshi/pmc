@@ -32,8 +32,8 @@ namespace pmc {
 
     class pmc_maxclique {
         public:
-            std::vector<int>* edges;
-            std::vector<long long>* vertices;
+            std::vector<int> const* edges;
+            std::vector<long long> const* vertices;
             std::vector<int>* bound;
             std::vector<int>* order;
             std::vector<int>* degree;

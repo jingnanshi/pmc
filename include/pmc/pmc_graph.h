@@ -71,8 +71,8 @@ namespace pmc {
 
             int num_vertices() { return vertices.size() - 1; }
             int num_edges() { return edges.size()/2; }
-            std::vector <long long>* get_vertices(){ return &vertices; }
-            std::vector<int>* get_edges(){ return &edges; }
+            const std::vector <long long>& get_vertices() const noexcept { return vertices; }
+            const std::vector<int>& get_edges() const noexcept { return edges; }
             std::vector<int>* get_degree(){ return &degree; }
             std::vector<int> get_edges_array() { return edges; }
             std::vector<long long> get_vertices_array() { return vertices; };

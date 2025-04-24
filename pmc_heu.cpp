@@ -60,9 +60,8 @@ void pmc_heu::branch(vector<Vertex>& P, int sz,
 int pmc_heu::search_bounds(pmc_graph& G,
         vector<int>& C_max) {
 
-    V = G.get_vertices();
-    E = G.get_edges();
-    degree = G.get_degree();
+    V = &G.get_vertices();
+    E = &G.get_edges();
     vector <int> C, X;
     C.reserve(ub);
     C_max.reserve(ub);
@@ -134,6 +133,7 @@ int pmc_heu::search_cores(pmc_graph& G, vector<int>& C_max, int lb) {
     vector<short> ind(G.num_vertices(),0);
 
     int mc = lb, i;
+
     int lb_idx = 0, v = 0;
     for (i = G.num_vertices()-1; i >= 0; i--) {
         v = (*order)[i];

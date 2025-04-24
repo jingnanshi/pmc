@@ -32,8 +32,8 @@ namespace pmc {
 
     class pmc_heu {
         public:
-            std::vector<int>* E;
-            std::vector<long long>* V;
+            std::vector<int> const* E;
+            std::vector<long long> const* V;
             std::vector<int>* K;
             std::vector<int>* order;
             std::vector<int>* degree;
