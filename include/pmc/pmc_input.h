@@ -20,10 +20,10 @@
 #ifndef PMC_INPUT_H_
 #define PMC_INPUT_H_
 
-#include "pmc_headers.h"
 #include "pmc_utils.h"
 
 #include <iostream>
+#include <omp.h>
 #include <string>
 #include <unistd.h>
 

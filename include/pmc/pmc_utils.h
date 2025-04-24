@@ -20,7 +20,6 @@
 #ifndef PMC_UTILS_H_
 #define PMC_UTILS_H_
 
-#include <cstddef>
 #include <set>
 #include <string>
 #include <vector>

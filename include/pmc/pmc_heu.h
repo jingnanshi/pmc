@@ -21,7 +21,6 @@
 #define PMC_HEU_H_
 
 #include "pmc_graph.h"
-#include "pmc_headers.h"
 #include "pmc_input.h"
 #include "pmc_utils.h"
 #include "pmc_vertex.h"
