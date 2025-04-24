@@ -62,24 +62,24 @@ int pmc_heu::search_bounds(pmc_graph& G,
 
     V = &G.get_vertices();
     E = &G.get_edges();
-    vector <int> C, X;
+    std::vector<int> C;
     C.reserve(ub);
     C_max.reserve(ub);
-    vector<Vertex> P, T;
+    std::vector<Vertex> P;
     P.reserve(G.get_max_degree()+1);
-    T.reserve(G.get_max_degree()+1);
-    vector<short> ind(G.num_vertices(),0);
+
+    vector<short> ind(G.num_vertices(), 0);
 
     bool found_ub = false;
-    int mc = 0, i, v, lb_idx = 0;
+    int mc = 0, i;
 
     #pragma omp parallel for schedule(dynamic) \
-        shared(G, X, mc, C_max, lb_idx) private(i, v, P, C) firstprivate(ind) \
+        shared(G, mc, C_max) private(i, P, C) firstprivate(ind) \
         num_threads(num_threads)
     for (i = G.num_vertices()-1; i >= 0; --i) {
         if (found_ub) continue;
 
-        v = (*order)[i];
+        const int v = (*order)[i];
         const auto mc_prev = mc;
         auto mc_cur = mc_prev;
 
@@ -87,7 +87,6 @@ int pmc_heu::search_bounds(pmc_graph& G,
             for (long long j = (*V)[v]; j < (*V)[v + 1]; j++)
                 if ((*K)[(*E)[j]] > mc_cur)
                     P.push_back( Vertex((*E)[j], compute_heuristic((*E)[j])) );
-
 
             if (P.size() > mc_cur) {
                 std::sort(P.begin(), P.end(), incr_heur);
@@ -104,7 +103,8 @@ int pmc_heu::search_bounds(pmc_graph& G,
                     }
                 }
             }
-            C = X; P = T;
+            C.clear();
+            P.clear();
         }
     }
     DEBUG_PRINTF("[pmc heuristic]\t mc = %i\n", mc);
