@@ -16,6 +16,10 @@ public:
   bool_vector(std::size_t size = 0UL, bool value = false)
       : data_(size, to_int(value)) {}
 
+  std::size_t size() const noexcept { return data_.size(); }
+
+  bool empty() const noexcept { return data_.empty(); }
+
   void resize(std::size_t size, bool value = false) {
     data_.resize(size, to_int(value));
   }
