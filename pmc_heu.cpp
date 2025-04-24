@@ -72,16 +72,17 @@ int pmc_heu::search_bounds(pmc_graph& G,
     vector<short> ind(G.num_vertices(),0);
 
     bool found_ub = false;
-    int mc = 0, mc_prev, mc_cur, i, v, k, lb_idx = 0;
+    int mc = 0, i, v, lb_idx = 0;
 
     #pragma omp parallel for schedule(dynamic) \
-        shared(G, X, mc, C_max, lb_idx) private(i, v, P, mc_prev, mc_cur, C, k) firstprivate(ind) \
+        shared(G, X, mc, C_max, lb_idx) private(i, v, P, C) firstprivate(ind) \
         num_threads(num_threads)
     for (i = G.num_vertices()-1; i >= 0; --i) {
         if (found_ub) continue;
 
         v = (*order)[i];
-        mc_prev = mc_cur = mc;
+        int mc_prev = mc;
+        int mc_cur = mc;
 
         if ((*K)[v] > mc) {
             for (long long j = (*V)[v]; j < (*V)[v + 1]; j++)
@@ -94,15 +95,13 @@ int pmc_heu::search_bounds(pmc_graph& G,
                 branch(P, 1 , mc_cur, C, ind);
 
                 if (mc_cur > mc_prev) {
+                    #pragma omp critical
                     if (mc < mc_cur) {
-                        #pragma omp critical
-                        if (mc < mc_cur) {
-                            mc = mc_cur;
-                            C.push_back(v);
-                            C_max = C;
-                            if (mc >= ub) found_ub = true;
-                            print_info(C_max);
-                        }
+                        mc = mc_cur;
+                        C.push_back(v);
+                        C_max = C;
+                        if (mc >= ub) found_ub = true;
+                        print_info(C_max);
                     }
                 }
             }
@@ -134,7 +133,7 @@ int pmc_heu::search_cores(pmc_graph& G, vector<int>& C_max, int lb) {
     T.reserve(G.get_max_degree()+1);
     vector<short> ind(G.num_vertices(),0);
 
-    int mc = lb, mc_prev, mc_cur, i;
+    int mc = lb, i;
     int lb_idx = 0, v = 0;
     for (i = G.num_vertices()-1; i >= 0; i--) {
         v = (*order)[i];
@@ -142,11 +141,12 @@ int pmc_heu::search_cores(pmc_graph& G, vector<int>& C_max, int lb) {
     }
 
     #pragma omp parallel for schedule(dynamic) \
-        shared(G, X, mc, C_max) private(i, v, P, mc_prev, mc_cur, C) firstprivate(ind) num_threads(num_threads)
+        shared(G, X, mc, C_max) private(i, v, P, C) firstprivate(ind) num_threads(num_threads)
     for (i = lb_idx; i <= G.num_vertices()-1; i++) {
 
         v = (*order)[i];
-        mc_prev = mc_cur = mc;
+        int mc_prev = mc;
+        int mc_cur = mc;
 
         if ((*K)[v] > mc_cur) {
             for (long long j = (*V)[v]; j < (*V)[v + 1]; j++)
@@ -158,14 +158,12 @@ int pmc_heu::search_cores(pmc_graph& G, vector<int>& C_max, int lb) {
                 branch(P, 1 , mc_cur, C, ind);
 
                 if (mc_cur > mc_prev) {
+                    #pragma omp critical
                     if (mc < mc_cur) {
-                        #pragma omp critical
-                        if (mc < mc_cur) {
-                            mc = mc_cur;
-                            C.push_back(v);
-                            C_max = C;
-                            print_info(C_max);
-                        }
+                        mc = mc_cur;
+                        C.push_back(v);
+                        C_max = C;
+                        print_info(C_max);
                     }
                 }
             }
@@ -183,7 +181,7 @@ int pmc_heu::search(pmc_graph& G, vector<int>& C_max) {
 }
 
 
-inline void pmc_heu::print_info(vector<int> C_max) {
+void pmc_heu::print_info(const vector<int>& C_max) const {
     DEBUG_PRINTF("*** [pmc heuristic: thread %i", omp_get_thread_num() + 1);
     DEBUG_PRINTF("]   current max clique = %i", C_max.size());
     DEBUG_PRINTF(",  time = %i sec\n", get_time() - sec);

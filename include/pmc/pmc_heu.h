@@ -84,7 +84,7 @@ namespace pmc {
             inline void branch(std::vector<Vertex>& P, int sz,
                     int& mc, std::vector<int>& C, std::vector<short>& ind);
 
-            inline void print_info(std::vector<int> C_max);
+            void print_info(const std::vector<int>& C_max) const;
     };
 };
 #endif
