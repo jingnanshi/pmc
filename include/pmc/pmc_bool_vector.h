@@ -6,6 +6,11 @@
 #include <vector>
 
 namespace pmc {
+/// A bare minimum implementation of a boolean vector.
+///
+/// This class is recommended in place of std::vector<bool> or std::vector<int> for thread-safety.
+/// std::vector<bool> could cause a race condition if it is implemented as a dynamic bitset.
+/// std::vector<int> is not memory efficient and misleading as an element can hold other than 0 or 1.
 class bool_vector {
 public:
   bool_vector(std::size_t size = 0UL, bool value = false)
