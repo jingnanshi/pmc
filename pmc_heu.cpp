@@ -81,12 +81,12 @@ int pmc_heu::search_bounds(pmc_graph& G,
         if (found_ub) continue;
 
         v = (*order)[i];
-        int mc_prev = mc;
-        int mc_cur = mc;
+        const auto mc_prev = mc;
+        auto mc_cur = mc_prev;
 
-        if ((*K)[v] > mc) {
+        if ((*K)[v] > mc_cur) {
             for (long long j = (*V)[v]; j < (*V)[v + 1]; j++)
-                if ((*K)[(*E)[j]] > mc)
+                if ((*K)[(*E)[j]] > mc_cur)
                     P.push_back( Vertex((*E)[j], compute_heuristic((*E)[j])) );
 
 
@@ -145,8 +145,8 @@ int pmc_heu::search_cores(pmc_graph& G, vector<int>& C_max, int lb) {
     for (i = lb_idx; i <= G.num_vertices()-1; i++) {
 
         v = (*order)[i];
-        int mc_prev = mc;
-        int mc_cur = mc;
+        const auto mc_prev = mc;
+        auto mc_cur = mc_prev;
 
         if ((*K)[v] > mc_cur) {
             for (long long j = (*V)[v]; j < (*V)[v + 1]; j++)
