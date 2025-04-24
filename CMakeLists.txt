@@ -19,7 +19,7 @@ else()
         add_library(pmc STATIC ${PMC_SOURCE_FILES})
 endif()
 
-target_compile_options(pmc PUBLIC
+target_compile_options(pmc PRIVATE
         -Wall
         -Werror
         -Wextra
