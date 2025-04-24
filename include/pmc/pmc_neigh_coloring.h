@@ -34,7 +34,6 @@ namespace pmc {
             std::vector<Vertex> &P,
             std::vector<short>& ind,
             std::vector<int>& C,
-            std::vector<int>& C_max,
             std::vector< std::vector<int> >& colors,
             int& mc) {
 
@@ -86,15 +85,11 @@ namespace pmc {
 
     // sequential dynamic greedy coloring and sort
     static void neigh_coloring_dense(
-            std::vector<long long>& vs,
-            std::vector<int>& es,
             std::vector<Vertex> &P,
-            std::vector<short>& ind,
             std::vector<int>& C,
-            std::vector<int>& C_max,
             std::vector< std::vector<int> >& colors,
             int& mc,
-            std::vector<bool_vector>& adj) {
+            const std::vector<bool_vector>& adj) {
 
         int j = 0, u = 0, k = 1, k_prev = 0;
         int max_k = 1;

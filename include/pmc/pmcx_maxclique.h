@@ -96,7 +96,7 @@ namespace pmc {
                     std::vector<int>& C,
                     std::vector<int>& C_max,
                     std::vector< std::vector<int> >& colors,
-                    bool_vector& pruned,
+                    const bool_vector& pruned,
                     int& mc);
 
             int search_dense(pmc_graph& G, std::vector<int>& sol);
@@ -108,9 +108,9 @@ namespace pmc {
                     std::vector<int>& C,
                     std::vector<int>& C_max,
                     std::vector< std::vector<int> >& colors,
-                    bool_vector& pruned,
+                    const bool_vector& pruned,
                     int& mc,
-                    std::vector<bool_vector>& adj);
+                    const std::vector<bool_vector>& adj);
 
     };
 };

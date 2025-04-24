@@ -33,7 +33,7 @@ namespace pmc {
             // helper functions
             void read_mtx(const std::string& filename);
             void read_edges(const std::string& filename);
-            void read_metis(const std::string& filename);
+            void read_metis(const std::string& /*filename*/) {}
 
         public:
             std::vector<int> edges;
@@ -67,9 +67,7 @@ namespace pmc {
             void reduce_graph(
                     std::vector<long long>& vs,
                     std::vector<int>& es,
-                    const bool_vector& pruned,
-                    int id,
-                    int& mc);
+                    const bool_vector& pruned);
 
             int num_vertices() { return vertices.size() - 1; }
             int num_edges() { return edges.size()/2; }
@@ -97,7 +95,7 @@ namespace pmc {
             void initialize();
             std::string get_file_extension(const std::string& filename);
             void basic_stats(double sec);
-            void bound_stats(int alg, int lb, pmc_graph& G);
+            void bound_stats(int alg);
 
             // vertex sorter
             void compute_ordering(std::vector<int>& bound, std::vector<int>& order);
@@ -135,9 +133,7 @@ namespace pmc {
                     std::vector<long long>& vs,
                     std::vector<int>& es,
                     const bool_vector& pruned,
-                    pmc_graph& G,
-                    int id,
-                    int& mc);
+                    pmc_graph& G);
 
             bool clique_test(pmc_graph& G, std::vector<int> C);
     };

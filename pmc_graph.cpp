@@ -95,7 +95,7 @@ void pmc_graph::read_edges(const string& filename) {
     istringstream in_stream;
     string line = "";
     map< int, vector<int> > vert_list;
-    int v = 0, u = 0, num_es = 0, self_edges = 0;
+    int v = 0, u = 0, self_edges = 0;
 
     ifstream in_check (filename.c_str());
     if (!in_check) { cout << filename << "File not found!" <<endl; return; }
@@ -120,7 +120,6 @@ void pmc_graph::read_edges(const string& filename) {
     while (!in.eof()) {
         getline(in,line);
         if (line[0] == '%' || line[0] == '#') continue;
-        num_es++;
         if (line != "") {
             in_stream.clear();
             in_stream.str(line);
@@ -276,8 +275,6 @@ void pmc_graph::read_mtx(const string& filename) {
     vertex_degrees();
 }
 
-void pmc_graph::read_metis(const string& filename) { return; };
-
 void pmc_graph::create_adj() {
     double sec = get_time();
 
@@ -332,7 +329,7 @@ void pmc_graph::update_degrees() {
         degree[v] = vertices[v+1] - vertices[v];
 }
 
-void pmc_graph::update_degrees(bool flag) {
+void pmc_graph::update_degrees(bool /*flag*/) {
 
     int p = 0;
     max_degree = vertices[1] - vertices[0];
@@ -481,9 +478,7 @@ void pmc_graph::reduce_graph(const bool_vector& pruned) {
 void pmc_graph::reduce_graph(
         vector<long long>& vs,
         vector<int>& es,
-        const bool_vector& pruned,
-        int id,
-        int& mc) {
+        const bool_vector& pruned) {
 
     int num_vs = vs.size();
 
@@ -508,7 +503,7 @@ void pmc_graph::reduce_graph(
 }
 
 
-void pmc_graph::bound_stats(int alg, int lb, pmc_graph& G) {
+void pmc_graph::bound_stats(int alg) {
     cout << "graph: " << fn <<endl;
     cout << "alg: " << alg <<endl;
     cout << "-------------------------------" <<endl;

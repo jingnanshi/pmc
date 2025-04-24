@@ -127,9 +127,7 @@ void pmc_graph::reduce_graph(
         vector<long long>& vs,
         vector<int>& es,
         const bool_vector& pruned,
-        pmc_graph& G,
-        int id,
-        int& mc) {
+        pmc_graph& G) {
 
     int num_vs = vs.size();
 
