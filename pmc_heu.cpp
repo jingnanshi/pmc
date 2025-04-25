@@ -17,96 +17,113 @@
  ============================================================================
  */
 
+#include "pmc/pmc_bool_vector.h"
 #include "pmc/pmc_debug_utils.h"
 #include "pmc/pmc_heu.h"
 
 #include <algorithm>
 
 using namespace pmc;
-using namespace std;
 
 
-void pmc_heu::branch(vector<Vertex>& P, int sz,
-        int& mc, vector<int>& C, vector<short>& ind) {
+void pmc_heu::branch(std::vector<Vertex>& P, int sz,
+        int& mc, std::vector<int>& C, bool_vector& ind) {
 
-    if (P.size() > 0) {
+    if (!P.empty()) {
 
-        int u = P.back().get_id();
+        const int u = P.back().get_id();
         P.pop_back();
 
-        for (long long j = (*V)[u]; j < (*V)[u + 1]; j++)  ind[(*E)[j]] = 1;
+        for (long long j = (*V)[u]; j < (*V)[u + 1]; j++)  ind[(*E)[j]] = true;
 
-        vector <Vertex> R;
+        std::vector<Vertex> R;
         R.reserve(P.size());
-        for (int i = 0; i < P.size(); i++)
-            if (ind[P[i].get_id()])
-                if ((*K)[P[i].get_id()] > mc)
-                    R.push_back(P[i]);
 
-        for (long long j = (*V)[u]; j < (*V)[u + 1]; j++)  ind[(*E)[j]] = 0;
+        std::copy_if(P.begin(), P.end(), std::back_inserter(R),
+                     [this, mc, &ind](const Vertex &v) -> bool {
+                       return ind[v.get_id()] && (*K)[v.get_id()] > mc;
+                     });
 
-        int mc_prev = mc;
+        for (long long j = (*V)[u]; j < (*V)[u + 1]; j++)  ind[(*E)[j]] = false;
+
+        const int mc_prev = mc;
         branch(R, sz + 1, mc, C, ind);
 
         if (mc > mc_prev)  C.push_back(u);
 
-        R.clear();  P.clear();
+        P.clear();
     }
     else if (sz > mc)
         mc = sz;
     return;
 }
 
-int pmc_heu::search_bounds(pmc_graph& G,
-        vector<int>& C_max) {
+int pmc_heu::search_bounds(const pmc_graph& G, std::vector<int>& C_max) {
+    V = &G.get_vertices();
+    E = &G.get_edges();
 
-    V = G.get_vertices();
-    E = G.get_edges();
-    degree = G.get_degree();
-    vector <int> C, X;
-    C.reserve(ub);
+    std::vector<int> C;
+    std::vector<Vertex> P;
+
     C_max.reserve(ub);
-    vector<Vertex> P, T;
+    C.reserve(ub);
     P.reserve(G.get_max_degree()+1);
-    T.reserve(G.get_max_degree()+1);
-    vector<short> ind(G.num_vertices(),0);
+
+    bool_vector ind(G.num_vertices(), false);
 
     bool found_ub = false;
-    int mc = 0, mc_prev, mc_cur, i, v, k, lb_idx = 0;
+    int mc = 0;
 
     #pragma omp parallel for schedule(dynamic) \
-        shared(G, X, mc, C_max, lb_idx) private(i, v, P, mc_prev, mc_cur, C, k) firstprivate(ind) \
+        shared(G, mc, C_max, found_ub) \
+        private(P, C) firstprivate(ind) \
         num_threads(num_threads)
-    for (i = G.num_vertices()-1; i >= 0; --i) {
-        if (found_ub) continue;
+    for (int i = G.num_vertices()-1; i >= 0; --i) {
+        bool found_ub_local = false;
+        #pragma omp atomic read acquire
+        found_ub_local = found_ub;
 
-        v = (*order)[i];
+        if (found_ub_local) {
+            continue;
+        }
+
+        const int v = (*order)[i];
+
+        int mc_prev, mc_cur;
+        #pragma omp atomic read acquire
         mc_prev = mc_cur = mc;
 
-        if ((*K)[v] > mc) {
+        if ((*K)[v] > mc_cur) {
             for (long long j = (*V)[v]; j < (*V)[v + 1]; j++)
-                if ((*K)[(*E)[j]] > mc)
-                    P.push_back( Vertex((*E)[j], compute_heuristic((*E)[j])) );
-
+                if ((*K)[(*E)[j]] > mc_cur)
+                    P.emplace_back((*E)[j], compute_heuristic((*E)[j]));
 
             if (P.size() > mc_cur) {
                 std::sort(P.begin(), P.end(), incr_heur);
                 branch(P, 1 , mc_cur, C, ind);
 
+                if (mc_cur >= ub) {
+                    #pragma omp atomic write release
+                    found_ub = true;
+                }
+
                 if (mc_cur > mc_prev) {
-                    if (mc < mc_cur) {
+                    #pragma omp atomic read acquire
+                    mc_prev = mc;
+
+                    if (mc_cur > mc_prev) {
+                        #pragma omp atomic write release
+                        mc = mc_cur;
+
+                        C.push_back(v);
+
                         #pragma omp critical
-                        if (mc < mc_cur) {
-                            mc = mc_cur;
-                            C.push_back(v);
-                            C_max = C;
-                            if (mc >= ub) found_ub = true;
-                            print_info(C_max);
-                        }
+                        std::swap(C_max, C);
+                        print_info(C_max);
                     }
                 }
             }
-            C = X; P = T;
+            C.clear();
         }
     }
     DEBUG_PRINTF("[pmc heuristic]\t mc = %i\n", mc);
@@ -124,66 +141,74 @@ int pmc_heu::compute_heuristic(int v) {
 }
 
 
-int pmc_heu::search_cores(pmc_graph& G, vector<int>& C_max, int lb) {
+int pmc_heu::search_cores(const pmc_graph& G, std::vector<int>& C_max, int lb) {
+    std::vector <int> C;
+    std::vector<Vertex> P;
 
-    vector <int> C, X;
-    C.reserve(ub);
     C_max.reserve(ub);
-    vector<Vertex> P, T;
+    C.reserve(ub);
     P.reserve(G.get_max_degree()+1);
-    T.reserve(G.get_max_degree()+1);
-    vector<short> ind(G.num_vertices(),0);
 
-    int mc = lb, mc_prev, mc_cur, i;
-    int lb_idx = 0, v = 0;
-    for (i = G.num_vertices()-1; i >= 0; i--) {
-        v = (*order)[i];
+    bool_vector ind(G.num_vertices(), false);
+
+    int mc = lb;
+
+    int lb_idx = 0;
+    for (int i = G.num_vertices()-1; i >= 0; i--) {
+        const int v = (*order)[i];
         if ((*K)[v] == lb)   lb_idx = i;
     }
 
     #pragma omp parallel for schedule(dynamic) \
-        shared(G, X, mc, C_max) private(i, v, P, mc_prev, mc_cur, C) firstprivate(ind) num_threads(num_threads)
-    for (i = lb_idx; i <= G.num_vertices()-1; i++) {
+        shared(G, mc, C_max) \
+        private(P, C) firstprivate(ind) \
+        num_threads(num_threads)
+    for (int i = lb_idx; i < G.num_vertices(); i++) {
+        const int v = (*order)[i];
 
-        v = (*order)[i];
+        int mc_prev, mc_cur;
+        #pragma omp atomic read acquire
         mc_prev = mc_cur = mc;
 
         if ((*K)[v] > mc_cur) {
             for (long long j = (*V)[v]; j < (*V)[v + 1]; j++)
                 if ((*K)[(*E)[j]] > mc_cur)
-                    P.push_back( Vertex((*E)[j], compute_heuristic((*E)[j])) );
+                    P.emplace_back((*E)[j], compute_heuristic((*E)[j]));
 
             if (P.size() > mc_cur) {
                 std::sort(P.begin(), P.end(), incr_heur);
                 branch(P, 1 , mc_cur, C, ind);
 
                 if (mc_cur > mc_prev) {
-                    if (mc < mc_cur) {
+                    #pragma omp atomic read acquire
+                    mc_prev = mc;
+
+                    if (mc_cur > mc_prev) {
+                        #pragma omp atomic write release
+                        mc = mc_cur;
+
+                        C.push_back(v);
+
                         #pragma omp critical
-                        if (mc < mc_cur) {
-                            mc = mc_cur;
-                            C.push_back(v);
-                            C_max = C;
-                            print_info(C_max);
-                        }
+                        std::swap(C_max, C);
+                        print_info(C_max);
                     }
                 }
             }
+            C.clear();
         }
-        C = X; P = T;
     }
-    C.clear();
     DEBUG_PRINTF("[search_cores]\t mc = %i\n", mc);
     return mc;
 }
 
 
-int pmc_heu::search(pmc_graph& G, vector<int>& C_max) {
+int pmc_heu::search(const pmc_graph& G, std::vector<int>& C_max) {
     return search_bounds(G, C_max);
 }
 
 
-inline void pmc_heu::print_info(vector<int> C_max) {
+void pmc_heu::print_info(const std::vector<int>& C_max) const {
     DEBUG_PRINTF("*** [pmc heuristic: thread %i", omp_get_thread_num() + 1);
     DEBUG_PRINTF("]   current max clique = %i", C_max.size());
     DEBUG_PRINTF(",  time = %i sec\n", get_time() - sec);

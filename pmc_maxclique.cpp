@@ -27,8 +27,8 @@ using namespace pmc;
 
 int pmc_maxclique::search(pmc_graph& G, vector<int>& sol) {
 
-    vertices = G.get_vertices();
-    edges = G.get_edges();
+    vertices = &G.get_vertices();
+    edges = &G.get_edges();
     degree = G.get_degree();
     bool_vector pruned(G.num_vertices());
     int mc = lb, i = 0, u = 0;
@@ -151,8 +151,8 @@ void pmc_maxclique::branch(
 
 int pmc_maxclique::search_dense(pmc_graph& G, vector<int>& sol) {
 
-    vertices = G.get_vertices();
-    edges = G.get_edges();
+    vertices = &G.get_vertices();
+    edges = &G.get_edges();
     degree = G.get_degree();
     auto adj = G.adj;
 
