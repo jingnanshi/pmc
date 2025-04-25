@@ -31,12 +31,12 @@ namespace pmc {
         private:
             int id, b;
         public:
-            Vertex(int vertex_id, int bound): id(vertex_id), b(bound) {};
+            Vertex(int vertex_id, int bound): id(vertex_id), b(bound) {}
 
-            void set_id(int vid) { id = vid; }
+            void set_id(int vid) noexcept { id = vid; }
             int get_id() const noexcept { return id; }
 
-            void set_bound(int value) { b = value; }
+            void set_bound(int value) noexcept { b = value; }
             int get_bound() const noexcept { return b; }
     };
 
@@ -47,7 +47,7 @@ namespace pmc {
         return (v.get_bound() < u.get_bound());
     };
 
-    inline static void print_mc_info(std::vector<int> &C_max, double sec) {
+    inline static void print_mc_info(const std::vector<int>& C_max, double sec) {
         DEBUG_PRINTF("*** [pmc: thread %i", omp_get_thread_num() + 1);
         DEBUG_PRINTF("]   current max clique = %i", C_max.size());
         DEBUG_PRINTF(",  time = %i sec\n", get_time() - sec);
