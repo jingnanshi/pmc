@@ -69,8 +69,8 @@ namespace pmc {
                     std::vector<int>& es,
                     const bool_vector& pruned);
 
-            int num_vertices() { return vertices.size() - 1; }
-            int num_edges() { return edges.size()/2; }
+            int num_vertices() const noexcept { return vertices.size() - 1; }
+            int num_edges() const noexcept { return edges.size()/2; }
             const std::vector <long long>& get_vertices() const noexcept { return vertices; }
             const std::vector<int>& get_edges() const noexcept { return edges; }
             std::vector<int>* get_degree(){ return &degree; }
@@ -78,19 +78,19 @@ namespace pmc {
             std::vector<long long> get_vertices_array() { return vertices; };
             std::vector<long long> e_v, e_u, eid;
 
-            int vertex_degree(int v) { return vertices[v] - vertices[v+1]; }
-            long long first_neigh(int v) { return vertices[v]; }
-            long long last_neigh(int v) { return vertices[v+1]; }
+            int vertex_degree(int v) const noexcept { return vertices[v] - vertices[v+1]; }
+            long long first_neigh(int v) const noexcept { return vertices[v]; }
+            long long last_neigh(int v) const noexcept { return vertices[v+1]; }
 
             void sum_vertex_degrees();
             void vertex_degrees();
             void update_degrees();
             void update_degrees(bool flag);
             void update_degrees(bool_vector& pruned, int& mc);
-            double density() { return (double)num_edges() / (num_vertices() * (num_vertices() - 1.0) / 2.0); }
-            int get_max_degree() { return max_degree; }
-            int get_min_degree() { return min_degree; }
-            double get_avg_degree() { return avg_degree; }
+            double density() const noexcept { return (double)num_edges() / (num_vertices() * (num_vertices() - 1.0) / 2.0); }
+            int get_max_degree() const noexcept { return max_degree; }
+            int get_min_degree() const noexcept { return min_degree; }
+            double get_avg_degree() const noexcept { return avg_degree; }
 
             void initialize();
             std::string get_file_extension(const std::string& filename);
@@ -109,7 +109,7 @@ namespace pmc {
             std::vector<int> kcore_order;
             std::vector<int>* get_kcores() { return &kcore; }
             std::vector<int>* get_kcore_ordering() { return &kcore_order; }
-            int get_max_core() { return max_core; }
+            int get_max_core() const noexcept { return max_core; }
             void update_kcores(const bool_vector& pruned);
 
             void compute_cores();

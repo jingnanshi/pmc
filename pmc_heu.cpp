@@ -17,33 +17,33 @@
  ============================================================================
  */
 
+#include "pmc/pmc_bool_vector.h"
 #include "pmc/pmc_debug_utils.h"
 #include "pmc/pmc_heu.h"
 
 #include <algorithm>
 
 using namespace pmc;
-using namespace std;
 
 
-void pmc_heu::branch(vector<Vertex>& P, int sz,
-        int& mc, vector<int>& C, vector<short>& ind) {
+void pmc_heu::branch(std::vector<Vertex>& P, int sz,
+        int& mc, std::vector<int>& C, bool_vector& ind) {
 
     if (P.size() > 0) {
 
         int u = P.back().get_id();
         P.pop_back();
 
-        for (long long j = (*V)[u]; j < (*V)[u + 1]; j++)  ind[(*E)[j]] = 1;
+        for (long long j = (*V)[u]; j < (*V)[u + 1]; j++)  ind[(*E)[j]] = true;
 
-        vector <Vertex> R;
+        std::vector <Vertex> R;
         R.reserve(P.size());
         for (int i = 0; i < P.size(); i++)
             if (ind[P[i].get_id()])
                 if ((*K)[P[i].get_id()] > mc)
                     R.push_back(P[i]);
 
-        for (long long j = (*V)[u]; j < (*V)[u + 1]; j++)  ind[(*E)[j]] = 0;
+        for (long long j = (*V)[u]; j < (*V)[u + 1]; j++)  ind[(*E)[j]] = false;
 
         int mc_prev = mc;
         branch(R, sz + 1, mc, C, ind);
@@ -57,8 +57,8 @@ void pmc_heu::branch(vector<Vertex>& P, int sz,
     return;
 }
 
-int pmc_heu::search_bounds(pmc_graph& G,
-        vector<int>& C_max) {
+int pmc_heu::search_bounds(const pmc_graph& G,
+        std::vector<int>& C_max) {
 
     V = &G.get_vertices();
     E = &G.get_edges();
@@ -68,7 +68,7 @@ int pmc_heu::search_bounds(pmc_graph& G,
     std::vector<Vertex> P;
     P.reserve(G.get_max_degree()+1);
 
-    vector<short> ind(G.num_vertices(), 0);
+    bool_vector ind(G.num_vertices(), false);
 
     bool found_ub = false;
     int mc = 0, i;
@@ -122,15 +122,15 @@ int pmc_heu::compute_heuristic(int v) {
 }
 
 
-int pmc_heu::search_cores(pmc_graph& G, vector<int>& C_max, int lb) {
+int pmc_heu::search_cores(const pmc_graph& G, std::vector<int>& C_max, int lb) {
 
-    vector <int> C, X;
+    std::vector <int> C, X;
     C.reserve(ub);
     C_max.reserve(ub);
-    vector<Vertex> P, T;
+    std::vector<Vertex> P, T;
     P.reserve(G.get_max_degree()+1);
     T.reserve(G.get_max_degree()+1);
-    vector<short> ind(G.num_vertices(),0);
+    bool_vector ind(G.num_vertices(), false);
 
     int mc = lb, i;
 
@@ -176,12 +176,12 @@ int pmc_heu::search_cores(pmc_graph& G, vector<int>& C_max, int lb) {
 }
 
 
-int pmc_heu::search(pmc_graph& G, vector<int>& C_max) {
+int pmc_heu::search(const pmc_graph& G, std::vector<int>& C_max) {
     return search_bounds(G, C_max);
 }
 
 
-void pmc_heu::print_info(const vector<int>& C_max) const {
+void pmc_heu::print_info(const std::vector<int>& C_max) const {
     DEBUG_PRINTF("*** [pmc heuristic: thread %i", omp_get_thread_num() + 1);
     DEBUG_PRINTF("]   current max clique = %i", C_max.size());
     DEBUG_PRINTF(",  time = %i sec\n", get_time() - sec);

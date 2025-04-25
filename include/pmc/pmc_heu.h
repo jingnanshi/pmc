@@ -20,6 +20,7 @@
 #ifndef PMC_HEU_H_
 #define PMC_HEU_H_
 
+#include "pmc/pmc_bool_vector.h"
 #include "pmc_graph.h"
 #include "pmc_input.h"
 #include "pmc_utils.h"
@@ -77,12 +78,12 @@ namespace pmc {
                 return (v.get_bound() < u.get_bound());
             }
 
-            int search(pmc_graph& graph, std::vector<int>& C_max);
-            int search_cores(pmc_graph& graph, std::vector<int>& C_max, int lb);
-            int search_bounds(pmc_graph& graph, std::vector<int>& C_max);
+            int search(const pmc_graph& graph, std::vector<int>& C_max);
+            int search_cores(const pmc_graph& graph, std::vector<int>& C_max, int lb);
+            int search_bounds(const pmc_graph& graph, std::vector<int>& C_max);
 
             inline void branch(std::vector<Vertex>& P, int sz,
-                    int& mc, std::vector<int>& C, std::vector<short>& ind);
+                    int& mc, std::vector<int>& C, bool_vector& ind);
 
             void print_info(const std::vector<int>& C_max) const;
     };
