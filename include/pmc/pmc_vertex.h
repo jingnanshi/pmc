@@ -33,11 +33,11 @@ namespace pmc {
         public:
             Vertex(int vertex_id, int bound): id(vertex_id), b(bound) {};
 
-            void set_id(int vid)        { id = vid; }
-            int get_id()                { return id; }
+            void set_id(int vid) { id = vid; }
+            int get_id() const noexcept { return id; }
 
-            void set_bound(int value)   { b = value; }
-            int get_bound()             { return b; }
+            void set_bound(int value) { b = value; }
+            int get_bound() const noexcept { return b; }
     };
 
     static bool decr_bound(Vertex v,  Vertex u) {

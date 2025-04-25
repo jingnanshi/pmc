@@ -29,28 +29,29 @@ using namespace pmc;
 void pmc_heu::branch(std::vector<Vertex>& P, int sz,
         int& mc, std::vector<int>& C, bool_vector& ind) {
 
-    if (P.size() > 0) {
+    if (!P.empty()) {
 
-        int u = P.back().get_id();
+        const int u = P.back().get_id();
         P.pop_back();
 
         for (long long j = (*V)[u]; j < (*V)[u + 1]; j++)  ind[(*E)[j]] = true;
 
-        std::vector <Vertex> R;
+        std::vector<Vertex> R;
         R.reserve(P.size());
-        for (int i = 0; i < P.size(); i++)
-            if (ind[P[i].get_id()])
-                if ((*K)[P[i].get_id()] > mc)
-                    R.push_back(P[i]);
+
+        std::copy_if(P.begin(), P.end(), std::back_inserter(R),
+                     [this, mc, &ind](const Vertex &v) -> bool {
+                       return ind[v.get_id()] && (*K)[v.get_id()] > mc;
+                     });
 
         for (long long j = (*V)[u]; j < (*V)[u + 1]; j++)  ind[(*E)[j]] = false;
 
-        int mc_prev = mc;
+        const int mc_prev = mc;
         branch(R, sz + 1, mc, C, ind);
 
         if (mc > mc_prev)  C.push_back(u);
 
-        R.clear();  P.clear();
+        P.clear();
     }
     else if (sz > mc)
         mc = sz;
@@ -89,7 +90,7 @@ int pmc_heu::search_bounds(const pmc_graph& G,
         if ((*K)[v] > mc_cur) {
             for (long long j = (*V)[v]; j < (*V)[v + 1]; j++)
                 if ((*K)[(*E)[j]] > mc_cur)
-                    P.push_back( Vertex((*E)[j], compute_heuristic((*E)[j])) );
+                    P.emplace_back((*E)[j], compute_heuristic((*E)[j]));
 
             if (P.size() > mc_cur) {
                 std::sort(P.begin(), P.end(), incr_heur);
