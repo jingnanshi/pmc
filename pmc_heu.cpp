@@ -80,8 +80,11 @@ int pmc_heu::search_bounds(const pmc_graph& G,
         if (found_ub) continue;
 
         const int v = (*order)[i];
-        const auto mc_prev = mc;
-        auto mc_cur = mc_prev;
+
+        int mc_prev, mc_cur;
+
+        #pragma omp atomic read acquire
+        mc_prev = mc_cur = mc;
 
         if ((*K)[v] > mc_cur) {
             for (long long j = (*V)[v]; j < (*V)[v + 1]; j++)
@@ -93,12 +96,18 @@ int pmc_heu::search_bounds(const pmc_graph& G,
                 branch(P, 1 , mc_cur, C, ind);
 
                 if (mc_cur > mc_prev) {
-                    #pragma omp critical
-                    if (mc < mc_cur) {
+                    #pragma omp atomic read acquire
+                    mc_prev = mc;
+
+                    if (mc_cur > mc_prev) {
+                        #pragma omp atomic write release
                         mc = mc_cur;
+
                         C.push_back(v);
-                        C_max = C;
-                        if (mc >= ub) found_ub = true;
+
+                        #pragma omp critical
+                        std::swap(C_max, C);
+                        if (mc_cur >= ub) found_ub = true;
                         print_info(C_max);
                     }
                 }
