@@ -104,6 +104,11 @@ int pmc_heu::search_bounds(const pmc_graph& G,
                 std::sort(P.begin(), P.end(), incr_heur);
                 branch(P, 1 , mc_cur, C, ind);
 
+                if (mc_cur >= ub) {
+                    #pragma omp atomic write release
+                    found_ub = true;
+                }
+
                 if (mc_cur > mc_prev) {
                     #pragma omp atomic read acquire
                     mc_prev = mc;
@@ -111,11 +116,6 @@ int pmc_heu::search_bounds(const pmc_graph& G,
                     if (mc_cur > mc_prev) {
                         #pragma omp atomic write release
                         mc = mc_cur;
-
-                        if (mc_cur >= ub) {
-                            #pragma omp atomic write release
-                            found_ub = true;
-                        }
 
                         C.push_back(v);
 
