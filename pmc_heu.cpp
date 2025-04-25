@@ -63,27 +63,35 @@ int pmc_heu::search_bounds(const pmc_graph& G,
 
     V = &G.get_vertices();
     E = &G.get_edges();
+
     std::vector<int> C;
-    C.reserve(ub);
-    C_max.reserve(ub);
     std::vector<Vertex> P;
+
+    C_max.reserve(ub);
+    C.reserve(ub);
     P.reserve(G.get_max_degree()+1);
 
     bool_vector ind(G.num_vertices(), false);
 
     bool found_ub = false;
-    int mc = 0, i;
+    int mc = 0;
 
     #pragma omp parallel for schedule(dynamic) \
-        shared(G, mc, C_max) private(i, P, C) firstprivate(ind) \
+        shared(G, mc, C_max, found_ub) \
+        private(P, C) firstprivate(ind) \
         num_threads(num_threads)
-    for (i = G.num_vertices()-1; i >= 0; --i) {
-        if (found_ub) continue;
+    for (int i = G.num_vertices()-1; i >= 0; --i) {
+        bool found_ub_local = false;
+        #pragma omp atomic read acquire
+        found_ub_local = found_ub;
+
+        if (found_ub_local) {
+            continue;
+        }
 
         const int v = (*order)[i];
 
         int mc_prev, mc_cur;
-
         #pragma omp atomic read acquire
         mc_prev = mc_cur = mc;
 
@@ -95,6 +103,11 @@ int pmc_heu::search_bounds(const pmc_graph& G,
             if (P.size() > mc_cur) {
                 std::sort(P.begin(), P.end(), incr_heur);
                 branch(P, 1 , mc_cur, C, ind);
+
+                if (mc_cur >= ub) {
+                    #pragma omp atomic write release
+                    found_ub = true;
+                }
 
                 if (mc_cur > mc_prev) {
                     #pragma omp atomic read acquire
@@ -108,7 +121,6 @@ int pmc_heu::search_bounds(const pmc_graph& G,
 
                         #pragma omp critical
                         std::swap(C_max, C);
-                        if (mc_cur >= ub) found_ub = true;
                         print_info(C_max);
                     }
                 }
