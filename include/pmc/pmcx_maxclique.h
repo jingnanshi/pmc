@@ -20,29 +20,20 @@
 #ifndef PMCX_MAXCLIQUE_H_
 #define PMCX_MAXCLIQUE_H_
 
-#include <cstddef>
-#include <sys/time.h>
-#include <unistd.h>
-#include <iostream>
-#include "pmc_headers.h"
-#include "pmc_utils.h"
 #include "pmc_graph.h"
 #include "pmc_input.h"
+#include "pmc_utils.h"
 #include "pmc_vertex.h"
-#include "pmc_neigh_cores.h"
-#include "pmc_neigh_coloring.h"
-#include <algorithm>
 
-using namespace std;
+#include <string>
+#include <vector>
 
 namespace pmc {
 
     class pmcx_maxclique {
         public:
-            vector<int>* edges;
-            vector<long long>* vertices;
-            vector<int>* bound;
-            vector<int>* order;
+            std::vector<int>* bound;
+            std::vector<int>* order;
             int param_ub;
             int ub;
             int lb;
@@ -53,7 +44,7 @@ namespace pmc {
             bool time_expired_msg;
             bool decr_order;
 
-            string vertex_ordering;
+            std::string vertex_ordering;
             int edge_ordering;
             int style_bounds;
             int style_dynamic_bounds;
@@ -94,30 +85,30 @@ namespace pmc {
 
             ~pmcx_maxclique() {};
 
-            int search(pmc_graph& G, vector<int>& sol);
+            int search(pmc_graph& G, std::vector<int>& sol);
             inline void branch(
-                    vector<long long>& vs,
-                    vector<int>& es,
-                    vector<Vertex> &P,
-                    vector<short>& ind,
-                    vector<int>& C,
-                    vector<int>& C_max,
-                    vector< vector<int> >& colors,
-                    int* &pruned,
+                    std::vector<long long>& vs,
+                    std::vector<int>& es,
+                    std::vector<Vertex> &P,
+                    std::vector<short>& ind,
+                    std::vector<int>& C,
+                    std::vector<int>& C_max,
+                    std::vector< std::vector<int> >& colors,
+                    const bool_vector& pruned,
                     int& mc);
 
-            int search_dense(pmc_graph& G, vector<int>& sol);
+            int search_dense(pmc_graph& G, std::vector<int>& sol);
             inline void branch_dense(
-                    vector<long long>& vs,
-                    vector<int>& es,
-                    vector<Vertex> &P,
-                    vector<short>& ind,
-                    vector<int>& C,
-                    vector<int>& C_max,
-                    vector< vector<int> >& colors,
-                    int* &pruned,
+                    std::vector<long long>& vs,
+                    std::vector<int>& es,
+                    std::vector<Vertex> &P,
+                    std::vector<short>& ind,
+                    std::vector<int>& C,
+                    std::vector<int>& C_max,
+                    std::vector< std::vector<int> >& colors,
+                    const bool_vector& pruned,
                     int& mc,
-                    vector<vector<bool>> &adj);
+                    const std::vector<bool_vector>& adj);
 
     };
 };

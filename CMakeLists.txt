@@ -19,6 +19,15 @@ else()
         add_library(pmc STATIC ${PMC_SOURCE_FILES})
 endif()
 
+target_compile_options(pmc PRIVATE
+        -Wall
+        -Werror
+        -Wextra
+        -Wno-format
+        -Wno-sign-compare
+        -Wno-unused-function
+)
+
 target_include_directories(pmc PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

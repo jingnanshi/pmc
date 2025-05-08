@@ -20,22 +20,8 @@
 #ifndef PMC_HEADERS_H_
 #define PMC_HEADERS_H_
 
-#include <iostream>
-#include <stdlib.h>
-#include <vector>
-#include <time.h>
-#include <string.h>
-#include <stdio.h>
-#include <map>
-#include <fstream>
-#include <sstream>
-#include <stdint.h>
-#include <omp.h>
-using namespace std;
-
 #ifndef LINE_LENGTH
 #define LINE_LENGTH 256
 #endif
-#define NANOSECOND 1000000000
 
 #endif

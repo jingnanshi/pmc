@@ -20,22 +20,21 @@
 #ifndef PMC_NEIGH_COLORING_H_
 #define PMC_NEIGH_COLORING_H_
 
+#include "pmc/pmc_bool_vector.h"
 #include "pmc_vertex.h"
 
-using namespace std;
+#include <vector>
 
 namespace pmc {
 
     // sequential dynamic greedy coloring and sort
     static void neigh_coloring_bound(
-            vector<long long>& vs,
-            vector<int>& es,
-            vector<Vertex> &P,
-            vector<short>& ind,
-            vector<int>& C,
-            vector<int>& C_max,
-            vector< vector<int> >& colors,
-            int* pruned,
+            std::vector<long long>& vs,
+            std::vector<int>& es,
+            std::vector<Vertex> &P,
+            std::vector<short>& ind,
+            std::vector<int>& C,
+            std::vector< std::vector<int> >& colors,
             int& mc) {
 
         int j = 0, u = 0, k = 1, k_prev = 0;
@@ -86,15 +85,11 @@ namespace pmc {
 
     // sequential dynamic greedy coloring and sort
     static void neigh_coloring_dense(
-            vector<long long>& vs,
-            vector<int>& es,
-            vector<Vertex> &P,
-            vector<short>& ind,
-            vector<int>& C,
-            vector<int>& C_max,
-            vector< vector<int> >& colors,
+            std::vector<Vertex> &P,
+            std::vector<int>& C,
+            std::vector< std::vector<int> >& colors,
             int& mc,
-            vector<vector<bool>> &adj) {
+            const std::vector<bool_vector>& adj) {
 
         int j = 0, u = 0, k = 1, k_prev = 0;
         int max_k = 1;

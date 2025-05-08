@@ -19,12 +19,15 @@
 
 #include "pmc/pmc_debug_utils.h"
 #include "pmc/pmc_graph.h"
+#include "pmc/pmc_utils.h"
+
 #include <algorithm>
+#include <iostream>
 
 using namespace std;
 using namespace pmc;
 
-int pmc_graph::initial_pruning(pmc_graph& G, int* &pruned, int lb) {
+int pmc_graph::initial_pruning(pmc_graph& G, bool_vector& pruned, int lb) {
     int lb_idx = 0;
     for (int i = G.num_vertices()-1; i >= 0; i--) {
         if (kcore[kcore_order[i]] == lb)  lb_idx = i;
@@ -44,7 +47,7 @@ int pmc_graph::initial_pruning(pmc_graph& G, int* &pruned, int lb) {
 }
 
 
-int pmc_graph::initial_pruning(pmc_graph& G, int* &pruned, int lb, vector<vector<bool>> &adj) {
+int pmc_graph::initial_pruning(pmc_graph& G, bool_vector& pruned, int lb, std::vector<bool_vector>& adj) {
     int lb_idx = 0;
     for (int i = G.num_vertices()-1; i >= 0; i--) {
         if (kcore[kcore_order[i]] == lb)  lb_idx = i;
@@ -123,10 +126,8 @@ void pmc_graph::order_vertices(vector<Vertex> &V, pmc_graph &G,
 void pmc_graph::reduce_graph(
         vector<long long>& vs,
         vector<int>& es,
-        int* &pruned,
-        pmc_graph& G,
-        int id,
-        int& mc) {
+        const bool_vector& pruned,
+        pmc_graph& G) {
 
     int num_vs = vs.size();
 
@@ -153,7 +154,7 @@ void pmc_graph::reduce_graph(
     #pragma omp single nowait
     {
         cout << ">>> [pmc: thread " << omp_get_thread_num() + 1 << "]" <<endl;
-        G.induced_cores_ordering(vs,es,pruned);
+        G.induced_cores_ordering(vs,es);
     }
     V.clear();
     E.clear();

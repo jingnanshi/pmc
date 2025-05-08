@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 
     //! read graph
     pmc_graph G(in.graph_stats,in.graph);
-    if (in.graph_stats) { G.bound_stats(in.algorithm, in.lb, G); }
+    if (in.graph_stats) { G.bound_stats(in.algorithm); }
 
     //! ensure wait time is greater than the time to recompute the graph data structures
     if (G.num_edges() > 1000000000 && in.remove_time < 120)  in.remove_time = 120;

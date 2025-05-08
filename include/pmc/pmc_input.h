@@ -20,10 +20,12 @@
 #ifndef PMC_INPUT_H_
 #define PMC_INPUT_H_
 
-#include "pmc_headers.h"
 #include "pmc_utils.h"
 
-using namespace std;
+#include <iostream>
+#include <omp.h>
+#include <string>
+#include <unistd.h>
 
 namespace pmc {
 class input {
@@ -43,12 +45,12 @@ class input {
         bool help;
         bool MCE;
         bool decreasing_order;
-        string heu_strat;
-        string format;
-        string graph;
-        string output;
-        string edge_sorter;
-        string vertex_search_order;
+        std::string heu_strat;
+        std::string format;
+        std::string graph;
+        std::string output;
+        std::string edge_sorter;
+        std::string vertex_search_order;
 
         input() {
             // default values
@@ -71,7 +73,7 @@ class input {
             format = "mtx";
             graph = "data/sample.mtx";
             output = "";
-            string edge_sorter = "";
+            std::string edge_sorter = "";
 
             // both off, use default alg
             if (heu_strat == "0" && algorithm == -1)
@@ -101,7 +103,7 @@ class input {
             format = "mtx";
             graph = "data/sample.mtx";
             output = "";
-            string edge_sorter = "";
+            std::string edge_sorter = "";
 
             int opt;
             while ((opt=getopt(argc,argv,"i:t:f:u:l:o:e:a:r:w:h:k:dgsv")) != EOF) {
@@ -179,12 +181,12 @@ class input {
             }
             fclose(fin);
 
-            cout << "\n\nFile Name ------------------------ " << graph.c_str() << endl;
+            std::cout << "\n\nFile Name ------------------------ " << graph.c_str() << std::endl;
             if (!fexists(graph.c_str()) ) {
-                cout << "File not found!" << endl;
+                std::cout << "File not found!" << std::endl;
                 return;
             }
-            cout << "workers: " << threads <<endl;
+            std::cout << "workers: " << threads <<std::endl;
             omp_set_num_threads(threads);
         }
 

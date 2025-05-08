@@ -18,7 +18,15 @@
  */
 
 #include "pmc/pmc_debug_utils.h"
+#include "pmc/pmc_utils.h"
 #include "pmc/pmc_graph.h"
+#include "pmc/pmc_headers.h"
+
+#include <cstring>
+#include <fstream>
+#include <iostream>
+#include <limits>
+#include <sstream>
 
 using namespace pmc;
 using namespace std;
@@ -87,7 +95,7 @@ void pmc_graph::read_edges(const string& filename) {
     istringstream in_stream;
     string line = "";
     map< int, vector<int> > vert_list;
-    int v = 0, u = 0, num_es = 0, self_edges = 0;
+    int v = 0, u = 0, self_edges = 0;
 
     ifstream in_check (filename.c_str());
     if (!in_check) { cout << filename << "File not found!" <<endl; return; }
@@ -112,7 +120,6 @@ void pmc_graph::read_edges(const string& filename) {
     while (!in.eof()) {
         getline(in,line);
         if (line[0] == '%' || line[0] == '#') continue;
-        num_es++;
         if (line != "") {
             in_stream.clear();
             in_stream.str(line);
@@ -159,17 +166,17 @@ pmc_graph::pmc_graph(long long nedges, const int *ei, const int *ej, int offset)
     vertex_degrees();
 }
 
-pmc_graph::pmc_graph(map<int,vector<int> > v_map) {
+pmc_graph::pmc_graph(const map<int, vector<int>>& v_map) {
   vertices.push_back(edges.size());
-  for (int i=0;i < v_map.size(); i++) {
-    edges.insert(edges.end(),v_map[i].begin(),v_map[i].end());
+  for (const auto& v_pair : v_map) {
+    edges.insert(edges.end(), v_pair.second.begin(), v_pair.second.end());
     vertices.push_back(edges.size());
   }
   vertex_degrees();
 }
 
 void pmc_graph::read_mtx(const string& filename) {
-    float connStrength = -DBL_MAX;
+    float connStrength = std::numeric_limits<float>::lowest();
     istringstream in2;
     string line="";
     map<int,vector<int> > v_map;
@@ -268,8 +275,6 @@ void pmc_graph::read_mtx(const string& filename) {
     vertex_degrees();
 }
 
-void pmc_graph::read_metis(const string& filename) { return; };
-
 void pmc_graph::create_adj() {
     double sec = get_time();
 
@@ -324,7 +329,7 @@ void pmc_graph::update_degrees() {
         degree[v] = vertices[v+1] - vertices[v];
 }
 
-void pmc_graph::update_degrees(bool flag) {
+void pmc_graph::update_degrees(bool /*flag*/) {
 
     int p = 0;
     max_degree = vertices[1] - vertices[0];
@@ -340,14 +345,14 @@ void pmc_graph::update_degrees(bool flag) {
 }
 
 
-void pmc_graph::update_degrees(int* &pruned, int& mc) {
+void pmc_graph::update_degrees(bool_vector& pruned, int& mc) {
     max_degree = -1;
     min_degree = std::numeric_limits<int>::max();
     int p = 0;
     for (long long v=0; v < num_vertices(); v++) {
         degree[v] = vertices[v+1] - vertices[v];
         if (degree[v] < mc) {
-            if (!pruned[v])  pruned[v] = 1;
+            if (!pruned[v])  pruned[v] = true;
             p++;
         }
         else {
@@ -360,7 +365,7 @@ void pmc_graph::update_degrees(int* &pruned, int& mc) {
 }
 
 
-void pmc_graph::update_kcores(int* &pruned) {
+void pmc_graph::update_kcores(const bool_vector& pruned) {
 
     long long n, d, i, j, start, num, md;
     long long v, u, w, du, pu, pw, md_end;
@@ -448,7 +453,7 @@ string pmc_graph::get_file_extension(const string& filename) {
 
 
 
-void pmc_graph::reduce_graph(int* &pruned) {
+void pmc_graph::reduce_graph(const bool_vector& pruned) {
     vector<long long> V(vertices.size(),0);
     vector<int> E;
     E.reserve(edges.size());
@@ -473,9 +478,7 @@ void pmc_graph::reduce_graph(int* &pruned) {
 void pmc_graph::reduce_graph(
         vector<long long>& vs,
         vector<int>& es,
-        int* &pruned,
-        int id,
-        int& mc) {
+        const bool_vector& pruned) {
 
     int num_vs = vs.size();
 
@@ -500,7 +503,7 @@ void pmc_graph::reduce_graph(
 }
 
 
-void pmc_graph::bound_stats(int alg, int lb, pmc_graph& G) {
+void pmc_graph::bound_stats(int alg) {
     cout << "graph: " << fn <<endl;
     cout << "alg: " << alg <<endl;
     cout << "-------------------------------" <<endl;

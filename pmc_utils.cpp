@@ -18,6 +18,15 @@
  */
 
 #include "pmc/pmc_utils.h"
+#include "pmc/pmc_debug_utils.h"
+
+#include <cassert>
+#include <cstring>
+#include <dirent.h>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <sys/time.h>
 
 using namespace std;
 
@@ -68,7 +77,7 @@ string memory_usage() {
     return mem.str();
 }
 
-void indent(int level, string str) {
+void indent(int level) {
     for (int i = 0; i < level; i++)
         cout << "   ";
     cout << "(" << level << ") ";
@@ -80,6 +89,8 @@ void print_max_clique(vector<int>& C) {
     for(int i = 0; i < C.size(); i++)
         cout << C[i] + 1 << " ";
     cout << endl;
+#else
+    discard(C);
 #endif
 }
 
@@ -98,6 +109,8 @@ void print_n_maxcliques(set< vector<int> > C, int n) {
         }
         else break;
     }
+#else
+    discard(C, n);
 #endif
 }
 

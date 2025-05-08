@@ -18,17 +18,17 @@
  */
 
 #include "pmc/pmcx_maxclique_basic.h"
+#include "pmc/pmc_neigh_coloring.h"
+
+#include <cstring>
 
 using namespace std;
 using namespace pmc;
 
 int pmcx_maxclique_basic::search(pmc_graph& G, vector<int>& sol) {
 
-    vertices = G.get_vertices();
-    edges = G.get_edges();
     degree = G.get_degree();
-    int* pruned = new int[G.num_vertices()];
-    memset(pruned, 0, G.num_vertices() * sizeof(int));
+    bool_vector pruned(G.num_vertices());
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -74,25 +74,23 @@ int pmcx_maxclique_basic::search(pmc_graph& G, vector<int>& sol) {
                             P.push_back(Vertex(es[j], (*degree)[es[j]]));
 
                 if (P.size() > mc) {
-                    neigh_coloring_bound(vs,es,P,ind,C,C_max,colors,pruned,mc);
+                    neigh_coloring_bound(vs,es,P,ind,C,colors,mc);
                     if (P.back().get_bound() > mc) {
                         branch(vs,es,P, ind, C, C_max, colors, pruned, mc);
                     }
                 }
                 P = T;
             }
-            pruned[u] = 1;
+            pruned[u] = true;
 
             // dynamically reduce graph in a thread-safe manner
             if ((get_time() - induce_time[omp_get_thread_num()]) > wait_time) {
-                G.reduce_graph( vs, es, pruned, G, i+lb_idx, mc);
+                G.reduce_graph( vs, es, pruned, G);
                 G.graph_stats(G, mc, i+lb_idx, sec);
                 induce_time[omp_get_thread_num()] = get_time();
             }
         }
     }
-
-    if (pruned) delete[] pruned;
 
     sol.resize(mc);
     for (int i = 0; i < C_max.size(); i++)  sol[i] = C_max[i];
@@ -111,7 +109,7 @@ void pmcx_maxclique_basic::branch(
         vector<int>& C,
         vector<int>& C_max,
         vector< vector<int> >& colors,
-        int* &pruned,
+        const bool_vector& pruned,
         int& mc) {
 
     // stop early if ub is reached
@@ -136,7 +134,7 @@ void pmcx_maxclique_basic::branch(
 
                 if (R.size() > 0) {
                     // color graph induced by R and sort for O(1) bound check
-                    neigh_coloring_bound(vs, es, R, ind, C, C_max, colors, pruned, mc);
+                    neigh_coloring_bound(vs, es, R, ind, C, colors, mc);
                     // search reordered R
                     branch(vs, es, R, ind, C, C_max, colors, pruned, mc);
                 }
@@ -179,13 +177,11 @@ void pmcx_maxclique_basic::branch(
 
 int pmcx_maxclique_basic::search_dense(pmc_graph& G, vector<int>& sol) {
 
-    vertices = G.get_vertices();
-    edges = G.get_edges();
     degree = G.get_degree();
     auto adj = G.adj;
 
-    int* pruned = new int[G.num_vertices()];
-    memset(pruned, 0, G.num_vertices() * sizeof(int));
+    bool_vector pruned(G.num_vertices());
+
     int mc = lb, i = 0, u = 0;
 
     // initial pruning
@@ -208,7 +204,7 @@ int pmcx_maxclique_basic::search_dense(pmc_graph& G, vector<int>& sol) {
     vector<Vertex> V;
     V.reserve(G.num_vertices());
     G.order_vertices(V,G,lb_idx,lb,vertex_ordering,decr_order);
-    DEBUG_PRINTF("|V| = %i\n", V.size());
+    DEBUG_PRINTF("|V| = %u\n", V.size());
 
     vector<short> ind(G.num_vertices(),0);
     vector<int> es = G.get_edges_array();
@@ -232,14 +228,14 @@ int pmcx_maxclique_basic::search_dense(pmc_graph& G, vector<int>& sol) {
                             P.push_back(Vertex(es[j], (*degree)[es[j]]));
 
                 if (P.size() > mc) {
-                    neigh_coloring_dense(vs,es,P,ind,C,C_max,colors,mc, adj);
+                    neigh_coloring_dense(P,C,colors,mc, adj);
                     if (P.back().get_bound() > mc) {
                         branch_dense(vs,es,P, ind, C, C_max, colors, pruned, mc, adj);
                     }
                 }
                 P = T;
             }
-            pruned[u] = 1;
+            pruned[u] = true;
             for (long long j = vs[u]; j < vs[u + 1]; j++) {
                 adj[u][es[j]] = false;
                 adj[es[j]][u] = false;
@@ -247,14 +243,12 @@ int pmcx_maxclique_basic::search_dense(pmc_graph& G, vector<int>& sol) {
 
             // dynamically reduce graph in a thread-safe manner
             if ((get_time() - induce_time[omp_get_thread_num()]) > wait_time) {
-                G.reduce_graph( vs, es, pruned, G, i+lb_idx, mc);
+                G.reduce_graph( vs, es, pruned, G);
                 G.graph_stats(G, mc, i+lb_idx, sec);
                 induce_time[omp_get_thread_num()] = get_time();
             }
         }
     }
-
-    if (pruned) delete[] pruned;
 
     sol.resize(mc);
     for (int i = 0; i < C_max.size(); i++)  sol[i] = C_max[i];
@@ -273,9 +267,9 @@ void pmcx_maxclique_basic::branch_dense(
         vector<int>& C,
         vector<int>& C_max,
         vector< vector<int> >& colors,
-        int* &pruned,
+        bool_vector& pruned,
         int& mc,
-        vector<vector<bool>> &adj) {
+        std::vector<bool_vector>& adj) {
 
     // stop early if ub is reached
     if (not_reached_ub) {
@@ -293,7 +287,7 @@ void pmcx_maxclique_basic::branch_dense(
 
                 if (R.size() > 0) {
                     // color graph induced by R and sort for O(1)
-                    neigh_coloring_dense(vs, es, R, ind, C, C_max, colors, mc, adj);
+                    neigh_coloring_dense(R, C, colors, mc, adj);
                     branch_dense(vs, es, R, ind, C, C_max, colors, pruned, mc, adj);
                 }
                 else if (C.size() > mc) {

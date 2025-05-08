@@ -20,28 +20,23 @@
 #ifndef PMC_MAXCLIQUE_H_
 #define PMC_MAXCLIQUE_H_
 
-#include <cstddef>
-#include <sys/time.h>
-#include <unistd.h>
-#include <iostream>
-#include <algorithm>
-#include "pmc_headers.h"
-#include "pmc_utils.h"
 #include "pmc_graph.h"
 #include "pmc_input.h"
+#include "pmc_utils.h"
 #include "pmc_vertex.h"
 
-using namespace std;
+#include <string>
+#include <vector>
 
 namespace pmc {
 
     class pmc_maxclique {
         public:
-            vector<int>* edges;
-            vector<long long>* vertices;
-            vector<int>* bound;
-            vector<int>* order;
-            vector<int>* degree;
+            std::vector<int> const* edges;
+            std::vector<long long> const* vertices;
+            std::vector<int>* bound;
+            std::vector<int>* order;
+            std::vector<int>* degree;
             int param_ub;
             int ub;
             int lb;
@@ -52,7 +47,7 @@ namespace pmc {
             bool time_expired_msg;
             bool decr_order;
 
-            string vertex_ordering;
+            std::string vertex_ordering;
             int edge_ordering;
             int style_bounds;
             int style_dynamic_bounds;
@@ -94,27 +89,27 @@ namespace pmc {
 
             ~pmc_maxclique() {};
 
-            int search(pmc_graph& G, vector<int>& sol);
+            int search(pmc_graph& G, std::vector<int>& sol);
 
             void branch(
-                    vector<Vertex> &P,
-                    vector<short>& ind,
-                    vector<int>& C,
-                    vector<int>& C_max,
-                    int* &pruned,
+                    std::vector<Vertex> &P,
+                    std::vector<short>& ind,
+                    std::vector<int>& C,
+                    std::vector<int>& C_max,
+                    const bool_vector& pruned,
                     int& mc);
 
 
-            int search_dense(pmc_graph& G, vector<int>& sol);
+            int search_dense(pmc_graph& G, std::vector<int>& sol);
 
             void branch_dense(
-                    vector<Vertex> &P,
-                    vector<short>& ind,
-                    vector<int>& C,
-                    vector<int>& C_max,
-                    int* &pruned,
+                    std::vector<Vertex> &P,
+                    std::vector<short>& ind,
+                    std::vector<int>& C,
+                    std::vector<int>& C_max,
+                    bool_vector& pruned,
                     int& mc,
-                    vector<vector<bool>> &adj);
+                    std::vector<bool_vector>& adj);
 
     };
 };
