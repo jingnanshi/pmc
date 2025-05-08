@@ -90,8 +90,10 @@ int pmc_heu::search_bounds(const pmc_graph& G, std::vector<int>& C_max) {
         const int v = (*order)[i];
 
         int mc_prev, mc_cur;
-        #pragma omp atomic read acquire
-        mc_prev = mc_cur = mc;
+        {
+            #pragma omp critical
+            mc_prev = mc_cur = mc;
+        }
 
         if ((*K)[v] > mc_cur) {
             for (long long j = (*V)[v]; j < (*V)[v + 1]; j++)
@@ -108,16 +110,12 @@ int pmc_heu::search_bounds(const pmc_graph& G, std::vector<int>& C_max) {
                 }
 
                 if (mc_cur > mc_prev) {
-                    #pragma omp atomic read acquire
-                    mc_prev = mc;
+                    C.push_back(v);
 
-                    if (mc_cur > mc_prev) {
-                        #pragma omp atomic write release
+                    #pragma omp critical
+                    if (mc_cur > mc) {
                         mc = mc_cur;
 
-                        C.push_back(v);
-
-                        #pragma omp critical
                         std::swap(C_max, C);
                         print_info(C_max);
                     }
@@ -167,8 +165,10 @@ int pmc_heu::search_cores(const pmc_graph& G, std::vector<int>& C_max, int lb) {
         const int v = (*order)[i];
 
         int mc_prev, mc_cur;
-        #pragma omp atomic read acquire
-        mc_prev = mc_cur = mc;
+        {
+            #pragma omp critical
+            mc_prev = mc_cur = mc;
+        }
 
         if ((*K)[v] > mc_cur) {
             for (long long j = (*V)[v]; j < (*V)[v + 1]; j++)
@@ -180,16 +180,12 @@ int pmc_heu::search_cores(const pmc_graph& G, std::vector<int>& C_max, int lb) {
                 branch(P, 1 , mc_cur, C, ind);
 
                 if (mc_cur > mc_prev) {
-                    #pragma omp atomic read acquire
-                    mc_prev = mc;
+                    C.push_back(v);
 
-                    if (mc_cur > mc_prev) {
-                        #pragma omp atomic write release
+                    #pragma omp critical
+                    if (mc_cur > mc) {
                         mc = mc_cur;
 
-                        C.push_back(v);
-
-                        #pragma omp critical
                         std::swap(C_max, C);
                         print_info(C_max);
                     }
