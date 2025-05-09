@@ -17,6 +17,7 @@ if (PMC_BUILD_SHARED)
         add_library(pmc SHARED ${PMC_SOURCE_FILES})
 else()
         add_library(pmc STATIC ${PMC_SOURCE_FILES})
+        set_property(TARGET pmc PROPERTY POSITION_INDEPENDENT_CODE 1)
 endif()
 
 target_compile_options(pmc PRIVATE
